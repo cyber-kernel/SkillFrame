@@ -1,0 +1,11 @@
+*.pyc
+__pycache__/
+db.sqlite3
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
+env.py
+static_prod/
+.vscode/
+venv/
+.cache/
