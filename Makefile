@@ -10,6 +10,9 @@ mm:
 run:
 	py manage.py runserver
 
+twrun:
+	python manage.py tailwind start
+	
 csu:
 	py manage.py createsuperuser
 
