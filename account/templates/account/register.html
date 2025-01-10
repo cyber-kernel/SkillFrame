@@ -1,5 +1,7 @@
 {% extends 'layout.html' %}
-
+{% block title %}
+ | Register
+{% endblock %}
 {% block body %}
 <section class="bg-gray-50 dark:bg-gray-900 min-h-screen">
     <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -54,7 +56,7 @@
                         Create an account
                     </button>
                     <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                        Already have an account? <a href="#"
+                        Already have an account? <a href="{% url 'login' %}"
                             class="font-medium text-cyan-600 hover:underline dark:text-cyan-500">Login
                             here</a>
                     </p>
