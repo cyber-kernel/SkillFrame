@@ -46,20 +46,15 @@
                 <div class="flex justify-between items-center mt-4">
                     <!-- Created On Field -->
                     <p class="text-gray-400 text-sm">Created On: <span class="text-gray-200">
-                            {{ todo.created_on }}</span></p>
+                        {{ todo.created_on}}</span></p>
 
                     <div class="flex space-x-4">
-                        <!-- Edit Button -->
                         <!-- Edit Button -->
                         <button
                             class="text-blue-400 hover:text-blue-500 transition-all duration-300 ease-in-out py-2 px-4 rounded-lg border-2 border-blue-400 hover:scale-105 hover:border-blue-500"
                             onclick="openEditModal({{ todo.id }}, '{{ todo.title }}', '{{ todo.desc }}', '{{ todo.priority }}')">
                             <i class="fas fa-edit"></i> Edit
                         </button>
-
-
-
-
 
                         <!-- Mark as Done Button -->
                         <button
@@ -179,9 +174,7 @@
             }, 300);
         });
     });
-</script>
 
-<script>
     function openEditModal(todoId, todoTitle, todoDesc, todoPriority) {
         console.log("todoId:", todoId); // Check the value of todoId
         document.getElementById('title').value = todoTitle;
@@ -195,6 +188,7 @@
         // Open the modal
         document.getElementById('taskModal').classList.remove('hidden');
     }
+
 
 </script>
 {% endblock %}
