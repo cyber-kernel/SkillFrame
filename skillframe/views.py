@@ -7,3 +7,5 @@ def index(request):
 
 def about_me(request):
     return render(request, "about_me.html")
+def contact_me(request):
+    return render(request, "contact_me.html")

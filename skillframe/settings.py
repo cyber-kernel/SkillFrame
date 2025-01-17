@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'account.apps.AccountConfig',
     'todo.apps.TodoConfig',
+    'blog.apps.BlogConfig',
     'tailwind',
     'theme',
     'django_browser_reload',
