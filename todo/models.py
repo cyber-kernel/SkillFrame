@@ -13,6 +13,7 @@ class Todo(models.Model):
     desc = models. CharField(max_length=100, default="descriptin here")
     priority = models.CharField(max_length=6, choices=PRIORITY, default=PRIORITY[1][1])
     created_on = models.DateTimeField(auto_now_add=True)
+    is_done = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-created_on']

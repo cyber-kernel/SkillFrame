@@ -3,6 +3,7 @@ from django.utils.html import escape
 from .models import Todo
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import JsonResponse
 
 MAX_TITLE_SIZE = 100
 MAX_DEVCODE_SIZE = 200
@@ -55,7 +56,7 @@ def delete_todo(request, todo_id):
 
 
 def edit_todo(request, todo_id):
-    todo = get_object_or_404(Todo, id=todo_id)  # Use `id` instead of `todo_id`
+    todo = get_object_or_404(Todo, id=todo_id, user=request.user)  # Use `id` instead of `todo_id`
 
     if request.method == "POST":
         data = request.POST
@@ -87,3 +88,10 @@ def edit_todo(request, todo_id):
             return redirect("todo:todo")
 
     return render(request, "todo/todo.html", {"todo": todo})
+
+
+def mark_done(request, todo_id):
+    todo = get_object_or_404(Todo, id=todo_id, user=request.user)
+    todo.is_done = True
+    todo.save()
+    return redirect("todo:todo")

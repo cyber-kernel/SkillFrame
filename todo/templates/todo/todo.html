@@ -29,36 +29,57 @@
         <section class="max-w-4xl mx-auto space-y-6">
             {% for todo in todos %}
             <!-- Task Card -->
-            <div
-                class="task-card bg-gray-800 p-6 rounded-lg shadow-xl border-2 border-transparent transition-all duration-300 ease-in-out hover:shadow-2xl hover:border-green-400 hover:scale-105 relative">
+            <div class="task-card p-6 rounded-lg shadow-xl transition-all duration-300 ease-in-out hover:shadow-2xl hover:scale-105 relative
+                {% if todo.is_done %}
+                    bg-black border-green-500 text-green-400 font-mono glitch-effect
+                {% else %}
+                    bg-gray-800 border-transparent text-white font-sans
+                {% endif %}
+            " data-task-id="{{ todo.id }}">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-xl font-semibold text-white">{{ todo.title }}</h3>
+                    <h3 class="text-xl font-semibold 
+                        {% if todo.is_done %}
+                            text-green-400 line-through
+                        {% else %}
+                            text-white
+                        {% endif %}
+                    ">{{ todo.title }}</h3>
                     <div class="flex items-center space-x-4">
                         <!-- Priority -->
                         <span class="text-cyan-400 font-semibold">{{ todo.priority }}</span>
                     </div>
                 </div>
-                <p class="text-gray-300 mt-2">
+                <p class="text-gray-300 mt-2
+                    {% if todo.is_done %}
+                        line-through text-gray-500
+                    {% endif %}
+                ">
                     {{ todo.desc }}
                 </p>
 
                 <!-- Task Action Buttons and Created On Field -->
                 <div class="flex justify-between items-center mt-4">
                     <!-- Created On Field -->
-                    <p class="text-gray-400 text-sm">Created On: <span class="text-gray-200">
-                        {{ todo.created_on}}</span></p>
+                    <p class="text-gray-400 text-sm">Created On: <span class="text-gray-200">{{ todo.created_on
+                            }}</span></p>
 
                     <div class="flex space-x-4">
-                        <!-- Edit Button -->
-                        <button
-                            class="text-blue-400 hover:text-blue-500 transition-all duration-300 ease-in-out py-2 px-4 rounded-lg border-2 border-blue-400 hover:scale-105 hover:border-blue-500"
+                        <!-- Edit Button (Disabled if task is done) -->
+                        <button class="text-blue-400 hover:text-blue-500 transition-all duration-300 ease-in-out py-2 px-4 rounded-lg border-2 border-blue-400 hover:scale-105 hover:border-blue-500
+                            {% if todo.is_done %}
+                                opacity-50 cursor-not-allowed
+                            {% endif %}
+                        " {% if todo.is_done %} disabled {% endif %}
                             onclick="openEditModal({{ todo.id }}, '{{ todo.title }}', '{{ todo.desc }}', '{{ todo.priority }}')">
                             <i class="fas fa-edit"></i> Edit
                         </button>
 
-                        <!-- Mark as Done Button -->
-                        <button
-                            class="text-green-400 hover:text-green-500 transition-all duration-300 ease-in-out py-2 px-4 rounded-lg border-2 border-green-400 hover:scale-105 hover:border-green-500">
+                        <!-- Mark as Done Button (Disabled if task is already done) -->
+                        <button class="text-green-400 hover:text-green-500 transition-all duration-300 ease-in-out py-2 px-4 rounded-lg border-2 border-green-400 hover:scale-105 hover:border-green-500
+                            {% if todo.is_done %}
+                                opacity-50 cursor-not-allowed
+                            {% endif %}
+                        " {% if todo.is_done %} disabled {% endif %} onclick="markAsDone({{ todo.id }})">
                             <i class="fas fa-check-circle"></i> Done
                         </button>
 
@@ -97,6 +118,11 @@
             </div>
             {% endfor %}
         </section>
+
+
+
+
+
 
     </div>
 
@@ -188,6 +214,28 @@
         // Open the modal
         document.getElementById('taskModal').classList.remove('hidden');
     }
+
+
+    function markAsDone(todoId) {
+        fetch(`/todo/mark-done/${todoId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+            credentials: 'same-origin',
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Reload the page to show success message
+                    window.location.reload();
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
 
 
 </script>

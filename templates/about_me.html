@@ -1,0 +1,206 @@
+{% extends "layout.html" %}
+
+{% block title %}
+| About Me
+{% endblock %}
+
+{% block body %}
+
+<!-- Custom CSS -->
+<style>
+    /* Heading Slide-In Animation */
+    @keyframes slideIn {
+        0% { transform: translateY(-50px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .animate-heading {
+        animation: slideIn 1.5s ease-out forwards;
+    }
+
+    /* Description Fade-In Animation */
+    @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+
+    .animate-description {
+        animation: fadeIn 2s ease-in forwards;
+    }
+
+    /* Floating Code Animation */
+    @keyframes floatCode {
+        0% { transform: translateY(-10px); }
+        50% { transform: translateY(10px); }
+        100% { transform: translateY(-10px); }
+    }
+
+    .animate-code {
+        animation: floatCode 3s ease-in-out infinite;
+    }
+
+    /* Button Slide-Up Animation */
+    @keyframes slideUp {
+        0% { transform: translateY(50px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .animate-button {
+        animation: slideUp 1s ease-out forwards;
+        animation-delay: 3s; /* Delay to make the button appear after some time */
+    }
+        
+</style>
+
+<section class="bg-gray-900 text-white py-16 px-6 md:px-12 relative overflow-hidden">
+    <div class="max-w-screen-xl mx-auto text-center space-y-16">
+
+        <!-- Intro Section -->
+        <div class="relative py-16 px-6 md:px-12 bg-gray-900 text-white overflow-hidden">
+            <div class="max-w-screen-xl mx-auto text-center space-y-8">
+                <!-- Heading with Slide-In Effect -->
+                <h1 class="text-5xl font-extrabold text-green-400 tracking-wide mb-4 animate-heading">
+                    Who Am I?
+                </h1>
+
+                <!-- Description with FadeIn Effect -->
+                <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto animate-description">
+                    I am a hacker and developer constantly pushing the limits of what's possible. My journey revolves
+                    around
+                    <span class="font-semibold text-green-400">breaking systems</span>, building
+                    <span class="font-semibold text-blue-400">innovative applications</span>, and diving into the depths
+                    of
+                    <span class="font-semibold text-cyan-400">cybersecurity</span>.
+                </p>
+
+                <!-- Floating Code Effect -->
+                <div class="relative z-10">
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-code">
+                        <pre class="text-lg font-mono text-gray-400 opacity-70">
+                    <code>
+                        import hacker_tools
+                        break_systems()
+                        innovative_apps()
+                        dive_into_security()
+                    </code>
+                </pre>
+                    </div>
+                </div>
+
+                <!-- CTA Button with Slide-In Effect -->
+                <div class="mt-8 animate-button">
+                    <button class="px-6 py-3 bg-gradient-to-r from-green-400 to-cyan-400 text-white text-lg rounded-lg">
+                        Let's Connect
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Tech Stack Section -->
+        <div
+            class="tech-stack grid grid-cols-1 md:grid-cols-3 gap-8 animate__animated animate__fadeIn animate__delay-2s">
+            <div
+                class="tech-card p-6 bg-gray-800 rounded-lg shadow-lg transform hover:scale-105 hover:rotate-3 transition-all duration-500 ease-in-out">
+                <h3 class="text-3xl font-semibold text-cyan-400 mb-4">Hacking</h3>
+                <p class="text-gray-300">Expert in penetration testing, vulnerability assessments, and securing systems.
+                </p>
+            </div>
+            <div
+                class="tech-card p-6 bg-gray-800 rounded-lg shadow-lg transform hover:scale-105 hover:rotate-3 transition-all duration-500 ease-in-out">
+                <h3 class="text-3xl font-semibold text-blue-400 mb-4">Development</h3>
+                <p class="text-gray-300">Full-stack web development with a focus on building scalable, modern
+                    applications.</p>
+            </div>
+            <div
+                class="tech-card p-6 bg-gray-800 rounded-lg shadow-lg transform hover:scale-105 hover:rotate-3 transition-all duration-500 ease-in-out">
+                <h3 class="text-3xl font-semibold text-green-400 mb-4">AI & Automation</h3>
+                <p class="text-gray-300">Building intelligent automation solutions using AI to make work more efficient.
+                </p>
+            </div>
+        </div>
+
+        <!-- Projects Section -->
+        <div class="projects grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
+            <div
+                class="project-card bg-gray-800 p-8 rounded-lg shadow-2xl transform hover:scale-105 hover:rotate-3 transition-all duration-300 ease-in-out">
+                <h3 class="text-2xl font-semibold text-green-400 mb-4">VulnScanner</h3>
+                <p class="text-gray-300">Automated security scanner for web applications that detects vulnerabilities.
+                </p>
+            </div>
+            <div
+                class="project-card bg-gray-800 p-8 rounded-lg shadow-2xl transform hover:scale-105 hover:rotate-3 transition-all duration-300 ease-in-out">
+                <h3 class="text-2xl font-semibold text-blue-400 mb-4">Web App Framework</h3>
+                <p class="text-gray-300">A full-stack web app framework built to make development fast and scalable.</p>
+            </div>
+            <div
+                class="project-card bg-gray-800 p-8 rounded-lg shadow-2xl transform hover:scale-105 hover:rotate-3 transition-all duration-300 ease-in-out">
+                <h3 class="text-2xl font-semibold text-cyan-400 mb-4">AI-Driven Code Scanner</h3>
+                <p class="text-gray-300">AI tool to scan codebases for security flaws, improving code quality and
+                    security.</p>
+            </div>
+        </div>
+
+        <!-- About Me Section -->
+        <div
+            class="about-me bg-gradient-to-r from-green-500 via-cyan-500 to-blue-600 rounded-xl p-12 text-center space-y-6 animate__animated animate__fadeIn animate__delay-2.5s">
+            <h2 class="text-4xl font-semibold text-white">The Passion Behind the Code</h2>
+            <p class="text-lg text-white">I am a creator who loves solving problems with code, breaking systems, and
+                pushing the boundaries of what technology can do. Every challenge is an opportunity for me to grow and
+                learn something new.</p>
+            <a href="mailto:your-email@example.com"
+                class="mt-6 inline-block bg-gradient-to-r from-cyan-400 to-blue-600 text-white text-lg px-6 py-3 rounded-lg transform hover:scale-105 transition-all duration-300 ease-in-out">
+                Contact Me
+            </a>
+        </div>
+
+        <!-- Fun Interactive Section -->
+        <div class="interactive-section bg-gray-800 p-16 rounded-lg text-center mt-16 space-y-8">
+            <h2 class="text-3xl font-semibold text-green-400">Let's Break Things & Build Something New</h2>
+            <div class="space-x-6">
+                <button
+                    class="bg-gradient-to-r from-cyan-400 to-blue-600 text-white px-6 py-3 rounded-lg hover:scale-105 transform transition-all duration-300 ease-in-out">
+                    Hack the System
+                </button>
+                <button
+                    class="bg-gradient-to-r from-green-400 to-cyan-400 text-white px-6 py-3 rounded-lg hover:scale-105 transform transition-all duration-300 ease-in-out">
+                    Build Something Cool
+                </button>
+            </div>
+        </div>
+
+    </div>
+</section>
+<script>
+    // Typewriter effect for the "Some of My Work" text
+    const typewriterText = document.getElementById("typewriter-text");
+    const words = [
+        "Security Tool for Web Apps",
+        "AI-Powered Vulnerability Scanning",
+        "Real-Time Code Analysis"
+    ];
+    let wordIndex = 0;
+    let letterIndex = 0;
+    let typingSpeed = 100;
+
+    function typeWriter() {
+        if (letterIndex < words[wordIndex].length) {
+            typewriterText.innerHTML += words[wordIndex].charAt(letterIndex);
+            letterIndex++;
+            setTimeout(typeWriter, typingSpeed);
+        } else {
+            wordIndex++;
+            letterIndex = 0;
+            if (wordIndex < words.length) {
+                setTimeout(() => {
+                    typewriterText.innerHTML = "";
+                    typeWriter();
+                }, 1000);
+            }
+        }
+    }
+
+    typeWriter();
+</script>
+
+{% endblock %}
