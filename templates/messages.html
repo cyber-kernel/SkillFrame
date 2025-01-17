@@ -1,0 +1,32 @@
+{% if messages %}
+  <!-- Floating Message Box -->
+  <div id="floating-message-box" class="absolute top-[80px] left-1/2 transform -translate-x-1/2 z-50 mb-6 max-w-5xl mx-auto pt-6">
+    
+    <!-- Background Animation -->
+    <div
+        class="absolute inset-0 blur-lg bg-gradient-to-r from-cyan-900 via-cyan-800 to-cyan-700 opacity-30 animate-gradient-x">
+    </div>
+
+    <!-- Terminal Box -->
+    <div class="relative z-10 bg-gray-900 text-cyan-300 border border-cyan-500 shadow-xl rounded-lg font-mono p-4 min-h-[50px] max-h-[1000px]">
+      <div class="text-sm">
+        {% for message in messages %}
+          <div class="flex items-start space-x-2">
+            <!-- Terminal Prompt -->
+            <span class="text-yellow-400">root@localhost</span>:~$
+            <!-- Message -->
+            <span>echo '{{ message }}'</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Timeout to hide the message after 4 seconds
+    setTimeout(function() {
+      document.getElementById('floating-message-box').classList.add('hidden');
+    }, 3000); // 3000 milliseconds = 3 seconds
+  </script>
+  
+{% endif %}

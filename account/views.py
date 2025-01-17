@@ -56,5 +56,6 @@ def login(request):
 
 
 def logout_view(request):
+    messages.success(request, "You are logged out successfully")
     logout(request)
     return redirect("index")

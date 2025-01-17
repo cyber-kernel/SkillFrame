@@ -1,0 +1,83 @@
+{% extends 'layout.html' %}
+{% block title %}
+| Todo
+{% endblock %}
+
+{% block body %}
+
+<div class="min-h-screen bg-gray-900 text-white">
+    <!-- Header Section -->
+    <!-- Header Section -->
+    <header class="text-center pt-16 pb-8">
+        <h1 class="text-4xl font-bold text-green-400 mb-4">
+            Manage Your Tasks Effortlessly
+        </h1>
+        <p class="text-lg text-gray-300 max-w-3xl mx-auto">
+            Stay organized, boost productivity, and keep track of your tasks with our intuitive ToDo app. Add tasks,
+            categorize them, and maintain your workflow with ease—all in one place.
+        </p>
+        <a href="{% url 'todo:todo' %}"
+            class="inline-block bg-gradient-to-r from-cyan-400 to-green-400 text-white text-lg px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 mt-8">
+            Start Managing Tasks
+        </a>
+    </header>
+
+
+
+    <!-- Features Section -->
+    <section
+        class="px-6 py-16 bg-gradient-to-r from-green-400 to-blue-500 text-center transition-all duration-300 ease-in-out">
+        <h2 class="text-3xl font-semibold text-white mb-8">
+            Features That Help You Stay on Track
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div class="bg-gray-800 p-8 rounded-lg shadow-xl transition-transform duration-300 hover:scale-105">
+                <div class="text-5xl mb-4 text-green-500">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-2">Task Organization</h3>
+                <p class="text-gray-300">
+                    Organize tasks into categories, prioritize them, and never miss an important deadline again.
+                </p>
+            </div>
+            <div class="bg-gray-800 p-8 rounded-lg shadow-xl transition-transform duration-300 hover:scale-105">
+                <div class="text-5xl mb-4 text-cyan-400">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-2">Workflow Management</h3>
+                <p class="text-gray-300">
+                    Seamlessly track your progress and improve your workflow with custom statuses for each task.
+                </p>
+            </div>
+            <div class="bg-gray-800 p-8 rounded-lg shadow-xl transition-transform duration-300 hover:scale-105">
+                <div class="text-5xl mb-4 text-blue-600">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-2">Due Dates & Reminders</h3>
+                <p class="text-gray-300">
+                    Set due dates and get timely reminders to keep your tasks on track, making sure nothing slips
+                    through the cracks.
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Call to Action Section -->
+    <section class="px-6 py-16 bg-gray-800 text-center">
+        <h2 class="text-3xl font-semibold text-green-400 mb-4">
+            Ready to Stay Organized?
+        </h2>
+        <p class="text-lg text-gray-300 mb-6">
+            Start adding tasks, maintain your workflow, and never forget an important deadline again. Let's get to work!
+        </p>
+        <a href="{% url 'todo:todo' %}"
+            class="inline-block bg-gradient-to-r from-green-500 to-blue-600 text-white text-lg px-8 py-4 rounded-full shadow-xl hover:scale-110 hover:bg-green-600 transition-all duration-300 transform">
+            Start Managing Tasks
+        </a>
+
+
+    </section>
+</div>
+
+{% endblock %}

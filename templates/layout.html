@@ -1,4 +1,5 @@
 {% load static tailwind_tags %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -30,10 +31,13 @@
 </head>
 
 <body class="bg-gray-100">
+
+    {% include 'messages.html' %}
+
     <nav class="bg-gray-900 border-gray-700 shadow-lg">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
             <!-- Logo and brand name -->
-            <a href="https://flowbite.com/" class="flex items-center space-x-3 rtl:space-x-reverse">
+            <a href="{% url 'index' %}" class="flex items-center space-x-3 rtl:space-x-reverse">
                 <img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" />
                 <span class="self-center text-3xl font-semibold whitespace-nowrap text-green-400">
                     SkillFrame
@@ -44,7 +48,8 @@
             {% if user.is_authenticated %}
             <div
                 class="hidden w-full md:flex md:w-auto md:order-1 items-center space-x-8 rtl:space-x-reverse text-base">
-                <a href="#todo" class="hover:text-green-400 text-gray-300 transition duration-300 text-lg">
+                <a href="{% url 'todo:main' %}"
+                    class="hover:text-green-400 text-gray-300 transition duration-300 text-lg">
                     ToDo
                 </a>
                 <a href="#blogs" class="hover:text-green-400 text-gray-300 transition duration-300 text-lg">
@@ -65,20 +70,29 @@
                 {% if not user.is_authenticated %}
                 <!-- Login Button -->
                 <a href="{% url 'account:login' %}"
-                    class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-base px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    class="login-btn inline-block font-medium text-white text-lg px-6 py-3 rounded-lg transition-all duration-300 ease-in-out bg-gradient-to-r from-cyan-400 to-blue-600 hover:scale-105 hover:shadow-lg relative overflow-hidden">
                     Login
+                    <span
+                        class="absolute inset-0 w-full h-full bg-blue-600 transform scale-0 rounded-lg transition-all duration-300 ease-in-out group-hover:scale-100"></span>
                 </a>
+
 
                 <!-- Register Button -->
                 <a href="{% url 'account:register' %}"
-                    class="text-white bg-cyan-600 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-300 font-medium rounded-lg text-base px-5 py-2.5 text-center dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800">
+                    class="register-btn inline-block font-medium text-white text-lg px-6 py-3 rounded-lg transition-all duration-300 ease-in-out bg-gradient-to-r from-cyan-400 to-blue-500 hover:scale-105 hover:shadow-lg relative overflow-hidden">
                     Register
+                    <span
+                        class="absolute inset-0 w-full h-full bg-blue-500 transform scale-0 rounded-lg transition-all duration-300 ease-in-out group-hover:scale-100"></span>
                 </a>
+
+
                 {% else %}
                 <!-- Logout Button -->
                 <a href="{% url 'account:logout_view' %}"
-                    class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-base px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                    class="logout-btn inline-block font-medium text-white text-lg px-6 py-3 rounded-lg transition-all duration-300 ease-in-out bg-gradient-to-r from-green-400 to-cyan-400 hover:scale-105 hover:shadow-lg relative overflow-hidden">
                     Logout
+                    <span
+                        class="absolute inset-0 w-full h-full bg-cyan-400 transform scale-0 rounded-lg transition-all duration-300 ease-in-out group-hover:scale-100"></span>
                 </a>
                 {% endif %}
             </div>

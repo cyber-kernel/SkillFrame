@@ -1,0 +1,147 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block title %}
+| Manage Todo
+{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-900 text-white">
+    <!-- Header Section -->
+    <header class="text-center pt-32 pb-8">
+        <h1 class="text-5xl font-bold text-green-400 mb-4">
+            ToDo List for Hackers & Developers
+        </h1>
+        <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+            Stay productive with a powerful task manager. Whether you’re coding or hacking, this app will help you stay
+            focused and organized.
+        </p>
+    </header>
+
+    <div class="min-h-screen bg-gray-900 text-white px-6 py-8">
+        <!-- Add Task Button -->
+        <div class="flex justify-center mb-8">
+            <button id="openModalBtn"
+                class="bg-gradient-to-r from-green-400 to-blue-600 text-white font-semibold text-lg px-6 py-3 rounded-lg transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl hover:border-2 hover:border-cyan-400 transform hover:translate-x-1">
+                + Add New Task
+            </button>
+        </div>
+
+
+        <!-- Task List Section -->
+        <section class="max-w-4xl mx-auto space-y-6">
+            <!-- Task Card -->
+            <div
+                class="task-card bg-gray-800 p-6 rounded-lg shadow-xl border-2 border-transparent transition-all duration-300 ease-in-out hover:shadow-2xl hover:border-green-400 hover:scale-105 relative">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-semibold text-white">Task 1</h3>
+                    <div class="flex items-center space-x-4">
+                        <!-- Priority -->
+                        <span class="text-cyan-400 font-semibold">High</span>
+                    </div>
+                </div>
+                <p class="text-gray-300 mt-2">This is an example task description. Manage your tasks, stay organized!
+                </p>
+
+                <!-- Task Action Buttons and Created On Field -->
+                <div class="flex justify-between items-center mt-4">
+                    <!-- Created On Field -->
+                    <p class="text-gray-400 text-sm">Created On: <span class="text-gray-200">2025-01-16</span></p>
+
+                    <div class="flex space-x-4">
+                        <!-- Edit Button -->
+                        <button
+                            class="text-blue-400 hover:text-blue-500 transition-all duration-300 ease-in-out py-2 px-4 rounded-lg border-2 border-blue-400 hover:scale-105 hover:border-blue-500">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+
+                        <!-- Mark as Done Button -->
+                        <button
+                            class="text-green-400 hover:text-green-500 transition-all duration-300 ease-in-out py-2 px-4 rounded-lg border-2 border-green-400 hover:scale-105 hover:border-green-500">
+                            <i class="fas fa-check-circle"></i> Done
+                        </button>
+
+                        <!-- Delete Button -->
+                        <button
+                            class="text-red-400 hover:text-red-500 transition-all duration-300 ease-in-out py-2 px-4 rounded-lg border-2 border-red-400 hover:scale-105 hover:border-red-500">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal -->
+    <div id="taskModal"
+        class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden transition-opacity duration-300 ease-out">
+        <div
+            class="bg-gradient-to-br from-green-500 via-cyan-500 to-blue-500 text-white p-8 rounded-xl w-[32rem] scale-95 transform transition-transform duration-300 ease-out">
+            <h2 class="text-3xl font-bold mb-6 text-center">Add New Task</h2>
+
+            <!-- Modal Content -->
+            <form action="{% url 'todo:todo' %} method="post">
+                <!-- Title -->
+                <div class="mb-6">
+                    <label for="title" class="block text-base font-semibold">Title</label>
+                    <input type="text" id="title" name="todoTitle"
+                        class="mt-2 block w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring focus:ring-cyan-300"
+                        placeholder="Task Title">
+                </div>
+
+                <!-- Description -->
+                <div class="mb-6">
+                    <label for="description" class="block text-base font-semibold">Description</label>
+                    <textarea id="description" name="todoDescription"
+                        class="mt-2 block w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring focus:ring-green-300"
+                        placeholder="Task Description"></textarea>
+                </div>
+
+                <!-- Priority -->
+                <div class="mb-6">
+                    <label for="priority" class="block text-base font-semibold">Priority</label>
+                    <select id="priority" name="todoPriority"
+                        class="mt-2 block w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring focus:ring-blue-300">
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="button"
+                        class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-all duration-200 ease-out mr-3"
+                        id="submitBtn">Save Task</button>
+                    <button type="button"
+                        class="px-6 py-3 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-all duration-200 ease-out"
+                        id="closeModalBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const taskModal = document.getElementById("taskModal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+
+        openModalBtn.addEventListener("click", () => {
+            taskModal.classList.remove("hidden");
+            taskModal.classList.add("opacity-100", "scale-100");
+        });
+
+        closeModalBtn.addEventListener("click", () => {
+            taskModal.classList.remove("opacity-100", "scale-100");
+            taskModal.classList.add("opacity-0", "scale-95");
+            setTimeout(() => {
+                taskModal.classList.add("hidden");
+            }, 300);
+        });
+    });
+
+</script>
+{% endblock %}
