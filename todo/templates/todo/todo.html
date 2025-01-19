@@ -46,8 +46,12 @@
                     ">{{ todo.title }}</h3>
                     <div class="flex items-center space-x-4">
                         <!-- Priority -->
-                        <span class="text-cyan-400 font-semibold">{{ todo.priority }}</span>
+                        <span class="font-semibold"
+                            style="color: {% if todo.priority == 'high' %}red{% elif todo.priority == 'medium' %}orange{% else %}cyan{% endif %};">
+                            {{ todo.priority }}
+                        </span>
                     </div>
+
                 </div>
                 <p class="text-gray-300 mt-2
                     {% if todo.is_done %}
@@ -60,8 +64,8 @@
                 <!-- Task Action Buttons and Created On Field -->
                 <div class="flex justify-between items-center mt-4">
                     <!-- Created On Field -->
-                    <p class="text-gray-400 text-sm">Created On: <span class="text-gray-200">{{ todo.created_on
-                            }}</span></p>
+                    <p class="text-gray-400 text-sm">Created On: <span class="text-gray-200">
+                            {{ todo.created_on|date:"F j, Y, g:i A" }}</span></p>
 
                     <div class="flex space-x-4">
                         <!-- Edit Button (Disabled if task is done) -->
