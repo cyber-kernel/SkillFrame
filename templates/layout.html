@@ -28,6 +28,11 @@
             animation: gradient-x 3s linear infinite;
         }
     </style>
+
+    {% block style %}
+
+    {% endblock %}
+
 </head>
 
 <body class="bg-gray-100">
@@ -275,4 +280,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/flowbite@1.5.0/dist/flowbite.min.js"></script>
 
+{% block script %}
+    
+{% endblock %}
+    
 </html>
