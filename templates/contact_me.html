@@ -1,0 +1,170 @@
+{% extends "layout.html" %}
+
+{% block title %}
+| Contact Me
+{% endblock %}
+
+{% block body %}
+
+<!-- Custom CSS for Animations and Styles -->
+<style>
+    /* Fade-In Effect for Section */
+    @keyframes fadeInSection {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .animate-section {
+        animation: fadeInSection 1.5s ease-out forwards;
+    }
+
+    /* Button Hover Animation */
+    @keyframes buttonHover {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .hover-btn {
+        animation: buttonHover 1s ease-in-out infinite;
+    }
+
+    /* Input Focus Animation */
+    .focus-input:focus {
+        border-color: #4fd1c5;
+        box-shadow: 0 0 5px rgba(79, 209, 197, 0.6);
+    }
+
+    /* Floating Animation for Quotes */
+    @keyframes floatQuote {
+        0% {
+            transform: translateY(-10px);
+            opacity: 0;
+        }
+
+        50% {
+            transform: translateY(10px);
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateY(-10px);
+            opacity: 0;
+        }
+    }
+
+    .animate-quote {
+        animation: floatQuote 5s ease-in-out infinite;
+    }
+
+    /* Background Styling */
+    body {
+        background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+    }
+</style>
+
+<section
+    class="bg-gradient-to-r bg-gray-900 via-blue-900 to-cyan-900 py-16 px-6 md:px-12 text-white relative overflow-hidden">
+    <div class="max-w-screen-xl mx-auto text-center space-y-12 animate-section">
+
+        <!-- Section Heading -->
+        <h1 class="text-5xl font-extrabold text-green-400 tracking-wide mb-6 animate-heading">
+            Get In Touch with a Hacker & Developer
+        </h1>
+
+        <!-- Motivational Quotes for Developers and Hackers -->
+        <div class="text-center space-y-4 animate-quote">
+            <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto italic">"The best way to predict the future is
+                to hack it." – Anonymous</p>
+            <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto italic">"First, solve the problem. Then, write
+                the code." – John Johnson</p>
+            <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto italic">"A developer is a creator of the
+                future, a hacker is a guardian of truth." – Unknown</p>
+        </div>
+
+        <!-- Description -->
+        <p id="terminal-typing" class="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-8 animate-description">
+            Whether you’re a fellow hacker, a developer, or a tech enthusiast, feel free to drop me a message. Let's
+            push the boundaries of what we can build and break together.
+        </p>
+
+        <!-- Contact Form -->
+        <div class="bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+            <form action="mailto:your-email@example.com" method="POST" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Name Input -->
+                    <div>
+                        <input type="text" name="name" placeholder="Your Name"
+                            class="focus-input w-full py-3 px-6 rounded-lg bg-gray-700 text-gray-200 placeholder-gray-400 border-2 border-transparent focus:border-green-400 focus:ring-2 focus:ring-green-400 hover:border-cyan-400 transition-all duration-500 ease-in-out transform hover:scale-105"
+                            required>
+                    </div>
+
+                    <!-- Email Input -->
+                    <div>
+                        <input type="email" name="email" placeholder="Your Email"
+                            class="focus-input w-full py-3 px-6 rounded-lg bg-gray-700 text-gray-200 placeholder-gray-400 border-2 border-transparent focus:border-green-400 focus:ring-2 focus:ring-green-400 hover:border-cyan-400 transition-all duration-500 ease-in-out transform hover:scale-105"
+                            required>
+                    </div>
+                </div>
+
+                <!-- Message Textarea -->
+                <div>
+                    <textarea name="message" placeholder="Your Message"
+                        class="focus-input w-full py-3 px-6 rounded-lg bg-gray-700 text-gray-200 placeholder-gray-400 border-2 border-transparent focus:border-green-400 focus:ring-2 focus:ring-green-400 hover:border-cyan-400 transition-all duration-500 ease-in-out transform hover:scale-105"
+                        rows="6" required></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit"
+                        class="w-full py-3 px-6 bg-gradient-to-r from-green-400 to-cyan-400 text-white text-lg rounded-lg transform hover:scale-110 hover:shadow-2xl transition-all duration-500 ease-in-out relative overflow-hidden">
+                        <span
+                            class="absolute inset-0 w-full h-full bg-gradient-to-r from-green-400 to-cyan-400 opacity-0 transform scale-0 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:scale-100"></span>
+                        Send Message
+                    </button>
+                </div>
+            </form>
+        </div>
+
+
+        <!-- Contact Info Section -->
+        <div class="space-y-6 mt-16 animate-section">
+            <h2 class="text-3xl font-semibold text-white">Other Ways to Reach Me</h2>
+
+            <!-- Social Media Links -->
+            <div class="flex justify-center space-x-8 text-white">
+                <a href="https://twitter.com/yourhandle"
+                    class="transform hover:scale-110 transition-all duration-300 ease-in-out">
+                    <i class="fab fa-twitter fa-3x"></i>
+                </a>
+                <a href="https://linkedin.com/in/yourprofile"
+                    class="transform hover:scale-110 transition-all duration-300 ease-in-out">
+                    <i class="fab fa-linkedin fa-3x"></i>
+                </a>
+                <a href="https://github.com/yourusername"
+                    class="transform hover:scale-110 transition-all duration-300 ease-in-out">
+                    <i class="fab fa-github fa-3x"></i>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Icons (Font Awesome or other library) -->
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+{% endblock %}

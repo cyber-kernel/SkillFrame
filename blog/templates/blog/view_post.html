@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+
+{% block title %}
+| View Post
+{% endblock %}
+
+{% block style %}
+<style>
+    @keyframes slideIn {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .slideIn {
+        animation: slideIn 0.7s ease-out;
+    }
+
+    .authorHighlight {
+        background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(0, 123, 255, 0.2));
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    .card-hover:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .card-hover:hover .card-title {
+        color: #00bcd4;
+        /* Cyan color on hover */
+        transition: color 0.3s ease-in-out;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="bg-gray-900 min-h-screen text-gray-100 font-sans">
+    <div class="container mx-auto p-6 lg:flex lg:gap-8">
+        <!-- Main Content Section -->
+        <div class="lg:w-3/4 bg-gray-800 shadow-lg rounded-lg overflow-hidden slideIn">
+            <!-- Post Thumbnail -->
+            <img src="{{ post.thumbnail.url }}" alt="Post Thumbnail" class="w-full h-64 object-cover">
+
+            <!-- Post Content -->
+            <div class="p-8">
+                <h1 class="text-3xl font-bold text-cyan-400">{{ post.title }}</h1>
+                <p class="text-sm text-gray-400 mt-2">Published on: {{ post.published_on|date:"F j, Y" }} | Views: {{
+                    post.views }}</p>
+                <p class="text-sm text-green-400 mt-1">Category: {{ post.category.name }}</p>
+
+                <div class="mt-4 text-gray-300 leading-relaxed">
+                    <p>{{ post.content }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Section with Author -->
+        <div class="lg:w-1/4 mt-8 lg:mt-0">
+            <div class="sticky top-8 space-y-6">
+                <div class="authorHighlight">
+                    <h2 class="text-xl font-semibold text-cyan-400 mb-2">Author</h2>
+                    <p class="text-lg text-blue-300 font-bold">{{ post.author.username }}</p>
+                </div>
+
+                <h2 class="text-xl font-semibold text-cyan-400 mt-8">Similar Posts</h2>
+
+                <!-- Similar Post Cards -->
+
+                {% for post in category_posts %}
+                <div
+                    class="bg-gray-800 shadow-lg rounded-lg overflow-hidden card-hover group transition-all duration-300">
+                    <div class="relative">
+                        <img src="{{ post.thumbnail.url }}" alt="Similar Post Thumbnail"
+                            class="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300">
+                        <span
+                            class="absolute top-3 left-3 bg-gradient-to-r from-green-600 to-cyan-700 text-xs font-semibold px-3 py-1 rounded-full shadow-md group-hover:scale-110 transition-transform duration-300">
+                            {{ post.category.name }}
+                        </span>
+                    </div>
+                    <div class="p-4">
+                        <h3
+                            class="text-lg font-bold text-blue-400 card-title group-hover:text-cyan-400 transition-colors duration-300">
+                            {{ post.title }}</h3>
+                        <p class="text-sm text-gray-400 mt-2">{{ post.description|truncatewords:20 }}</p>
+                        <a href="#"
+                            class="inline-block mt-4 text-sm px-3 py-2 bg-gradient-to-r from-green-600 to-cyan-700 text-white rounded-md font-medium hover:from-cyan-700 hover:to-blue-600 transition-all duration-300">
+                            Read More
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+                <!-- View More Button -->
+                <div class="text-center mt-6">
+                    <button
+                        class="px-6 py-3 bg-gradient-to-r from-green-600 to-cyan-700 text-white rounded-full font-semibold text-lg shadow-md hover:from-cyan-700 hover:to-blue-600 transition-transform transform hover:scale-110 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50">
+                        View More
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    // Optional: Add custom interactivity or animations here
+</script>
+{% endblock %}
