@@ -9,4 +9,4 @@ static_prod/
 .vscode/
 venv/
 .cache/
-static/ckeditor
+static/ckeditor/
