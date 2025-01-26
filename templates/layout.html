@@ -27,6 +27,9 @@
             background-size: 200% 200%;
             animation: gradient-x 3s linear infinite;
         }
+
+
+
     </style>
 
     {% block style %}
@@ -49,46 +52,54 @@
                 </span>
             </a>
 
+            <!-- Hamburger menu for mobile -->
+            <button id="hamburger" aria-label="Open menu"
+                class="text-gray-300 hover:text-green-400 focus:outline-none focus:ring-2 focus:ring-green-400 md:hidden">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+
             <!-- Navigation Links (Visible only when logged in) -->
-            {% if user.is_authenticated %}
-            <div
-                class="hidden w-full md:flex md:w-auto md:order-1 items-center space-x-8 rtl:space-x-reverse text-base">
+            <div id="menu"
+                class="hidden md:flex flex-col md:flex-row md:items-center md:space-x-8 rtl:space-x-reverse text-base">
+                {% if user.is_authenticated %}
                 <a href="{% url 'todo:main' %}"
                     class="hover:text-green-400 text-gray-300 transition duration-300 text-lg">
                     ToDo
                 </a>
+
                 <!-- Blogs Dropdown -->
-                <div class="relative">
-                    <!-- Dropdown Trigger -->
+                <div class="relative group">
                     <button id="blogsDropdownButton"
-                        class="hover:text-green-400 text-gray-300 transition duration-300 text-lg inline-flex items-center focus:outline-none">
+                        class="hover:text-green-400 text-gray-300 transition duration-300 text-lg inline-flex items-center">
                         Blogs
                         <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </button>
-
-                    <!-- Dropdown Menu -->
-                    <div id="blogsDropdownMenu"
-                        class="hidden absolute bg-gray-900 border border-gray-700 mt-2 rounded-lg shadow-lg z-10 min-w-[12rem]">
+                    <div
+                        class="hidden group-hover:block absolute bg-gray-900 border border-gray-700 mt-2 rounded-lg shadow-lg z-10 min-w-[12rem]">
                         <a href="{% url 'blog:all_blogs' %}"
                             class="block px-4 py-2 text-gray-300 hover:text-green-400 hover:bg-gray-800 transition duration-300">
                             All Blogs
                         </a>
-                        <a href="#"
+                        <a href="{% url 'blog:latest_posts' %}"
                             class="block px-4 py-2 text-gray-300 hover:text-green-400 hover:bg-gray-800 transition duration-300">
                             Latest Blogs
                         </a>
-                        <a href="#"
+                        <a href="{% url 'blog:trending_posts' %}"
                             class="block px-4 py-2 text-gray-300 hover:text-green-400 hover:bg-gray-800 transition duration-300">
                             Trending Blogs
                         </a>
+                        <a href="{% url 'blog:all_categories' %}"
+                            class="block px-4 py-2 text-gray-300 hover:text-green-400 hover:bg-gray-800 transition duration-300">
+                            All Categories
+                        </a>
                     </div>
                 </div>
-
-
-
 
                 <a href="{% url 'about_me' %}"
                     class="hover:text-green-400 text-gray-300 transition duration-300 text-lg">
@@ -98,49 +109,99 @@
                     class="hover:text-green-400 text-gray-300 transition duration-300 text-lg">
                     Contact Me
                 </a>
-
-            </div>
-            {% endif %}
-
-            <!-- Right section: login, register -->
-            <div class="flex items-center md:order-2 space-x-4 rtl:space-x-reverse">
-                {% if not user.is_authenticated %}
-                <!-- Login Button -->
-                <a href="{% url 'account:login' %}"
-                    class="login-btn inline-block font-medium text-white text-lg px-6 py-3 rounded-lg transition-all duration-300 ease-in-out bg-gradient-to-r from-cyan-400 to-blue-600 hover:scale-105 hover:shadow-lg relative overflow-hidden">
-                    Login
-                    <span
-                        class="absolute inset-0 w-full h-full bg-blue-600 transform scale-0 rounded-lg transition-all duration-300 ease-in-out group-hover:scale-100"></span>
-                </a>
-
-
-                <!-- Register Button -->
-                <a href="{% url 'account:register' %}"
-                    class="register-btn inline-block font-medium text-white text-lg px-6 py-3 rounded-lg transition-all duration-300 ease-in-out bg-gradient-to-r from-cyan-400 to-blue-500 hover:scale-105 hover:shadow-lg relative overflow-hidden">
-                    Register
-                    <span
-                        class="absolute inset-0 w-full h-full bg-blue-500 transform scale-0 rounded-lg transition-all duration-300 ease-in-out group-hover:scale-100"></span>
-                </a>
-
-
-                {% else %}
-                <!-- Logout Button -->
-                <a href="{% url 'account:logout_view' %}"
-                    class="logout-btn inline-block font-medium text-white text-lg px-6 py-3 rounded-lg transition-all duration-300 ease-in-out bg-gradient-to-r from-green-400 to-cyan-400 hover:scale-105 hover:shadow-lg relative overflow-hidden">
-                    Logout
-                    <span
-                        class="absolute inset-0 w-full h-full bg-cyan-400 transform scale-0 rounded-lg transition-all duration-300 ease-in-out group-hover:scale-100"></span>
-                </a>
                 {% endif %}
             </div>
 
+            <!-- Right section: login, register -->
+            <div class="hidden md:flex items-center space-x-4 rtl:space-x-reverse">
+                {% if not user.is_authenticated %}
+                <a href="{% url 'account:login' %}"
+                    class="login-btn inline-block font-medium text-white text-lg px-6 py-3 rounded-lg transition-all duration-300 ease-in-out bg-gradient-to-r from-cyan-400 to-blue-600 hover:scale-105 hover:shadow-lg relative overflow-hidden">
+                    Login
+                </a>
+
+                <a href="{% url 'account:register' %}"
+                    class="register-btn inline-block font-medium text-white text-lg px-6 py-3 rounded-lg transition-all duration-300 ease-in-out bg-gradient-to-r from-cyan-400 to-blue-500 hover:scale-105 hover:shadow-lg relative overflow-hidden">
+                    Register
+                </a>
+                {% else %}
+                <a href="{% url 'account:logout_view' %}"
+                    class="logout-btn inline-block font-medium text-white text-lg px-6 py-3 rounded-lg transition-all duration-300 ease-in-out bg-gradient-to-r from-green-400 to-cyan-400 hover:scale-105 hover:shadow-lg relative overflow-hidden">
+                    Logout
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Hamburger menu dropdown -->
+        <div id="mobileMenu" class="hidden bg-gray-900 border-t border-gray-700 md:hidden">
+            <div class="flex flex-col p-4 space-y-4">
+                {% if user.is_authenticated %}
+                <a href="{% url 'todo:main' %}"
+                    class="text-gray-300 hover:text-green-400 transition duration-300 text-lg">
+                    ToDo
+                </a>
+
+                <!-- Blogs Dropdown -->
+                <div class="relative">
+                    <button id="mobileBlogsDropdownButton"
+                        class="w-full flex justify-between items-center text-gray-300 hover:text-green-400 text-lg focus:outline-none">
+                        Blogs
+                        <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="mobileBlogsDropdownMenu"
+                        class="hidden flex flex-col mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg">
+                        <a href="{% url 'blog:all_blogs' %}"
+                            class="px-4 py-2 text-gray-300 hover:text-green-400 hover:bg-gray-800">
+                            All Blogs
+                        </a>
+                        <a href="{% url 'blog:latest_posts' %}"
+                            class="px-4 py-2 text-gray-300 hover:text-green-400 hover:bg-gray-800">
+                            Latest Blogs
+                        </a>
+                        <a href="{% url 'blog:trending_posts' %}"
+                            class="px-4 py-2 text-gray-300 hover:text-green-400 hover:bg-gray-800">
+                            Trending Blogs
+                        </a>
+                        <a href="{% url 'blog:all_categories' %}"
+                            class="px-4 py-2 text-gray-300 hover:text-green-400 hover:bg-gray-800">
+                            All Categories
+                        </a>
+                    </div>
+                </div>
+
+                <a href="{% url 'about_me' %}"
+                    class="text-gray-300 hover:text-green-400 transition duration-300 text-lg">
+                    About Me
+                </a>
+                <a href="{% url 'contact_me' %}"
+                    class="text-gray-300 hover:text-green-400 transition duration-300 text-lg">
+                    Contact Me
+                </a>
+                <a href="{% url 'account:logout_view' %}"
+                    class="text-gray-300 hover:text-green-400 transition duration-300 text-lg">
+                    Logout
+                </a>
+                {% endif %}
+                {% if not user.is_authenticated %}
+                <a href="{% url 'account:login' %}"
+                    class="text-gray-300 hover:text-green-400 transition duration-300 text-lg">
+                    Login
+                </a>
+                <a href="{% url 'account:register' %}"
+                    class="text-gray-300 hover:text-green-400 transition duration-300 text-lg">
+                    Register
+                </a>
+                {% endif %}
+            </div>
         </div>
 
         <!-- Animated Effect -->
         <div class="h-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 animate-gradient-x"></div>
     </nav>
-
-
 
     {% block body %}
 
@@ -252,36 +313,55 @@
 </body>
 
 <script>
-    // Get elements
-    const dropdownButton = document.getElementById('blogsDropdownButton');
-    const dropdownMenu = document.getElementById('blogsDropdownMenu');
+    document.addEventListener('DOMContentLoaded', () => {
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileBlogsDropdownButton = document.getElementById('mobileBlogsDropdownButton');
+        const mobileBlogsDropdownMenu = document.getElementById('mobileBlogsDropdownMenu');
 
-    // Add event listeners
-    dropdownButton.addEventListener('mouseenter', () => {
-        dropdownMenu.classList.remove('hidden'); // Show dropdown
+        // Toggle the hamburger menu
+        hamburger.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('animate-fade-in');
+        });
+
+        // Toggle the Blogs dropdown inside the mobile menu
+        mobileBlogsDropdownButton.addEventListener('click', () => {
+            mobileBlogsDropdownMenu.classList.toggle('hidden'); // Toggle visibility of the dropdown
+            mobileBlogsDropdownMenu.classList.toggle('animate-fade-in'); // Add animation if desired
+        });
+
+        // Other event listeners for desktop (not modified, assuming these are fine)
+        const dropdownButton = document.getElementById('blogsDropdownButton');
+        const dropdownMenu = dropdownButton.nextElementSibling;
+
+        dropdownButton.addEventListener('mouseenter', () => {
+            dropdownMenu.classList.remove('hidden');
+        });
+
+        dropdownMenu.addEventListener('mouseenter', () => {
+            dropdownMenu.classList.remove('hidden');
+        });
+
+        dropdownButton.addEventListener('mouseleave', () => {
+            setTimeout(() => {
+                if (!dropdownMenu.matches(':hover')) {
+                    dropdownMenu.classList.add('hidden');
+                }
+            }, 200);
+        });
+
+        dropdownMenu.addEventListener('mouseleave', () => {
+            dropdownMenu.classList.add('hidden');
+        });
     });
 
-    dropdownMenu.addEventListener('mouseenter', () => {
-        dropdownMenu.classList.remove('hidden'); // Keep dropdown open when hovering on it
-    });
-
-    dropdownButton.addEventListener('mouseleave', () => {
-        setTimeout(() => {
-            if (!dropdownMenu.matches(':hover')) {
-                dropdownMenu.classList.add('hidden'); // Hide dropdown if mouse leaves button and menu
-            }
-        }, 200); // Small delay to allow menu hover
-    });
-
-    dropdownMenu.addEventListener('mouseleave', () => {
-        dropdownMenu.classList.add('hidden'); // Hide dropdown when mouse leaves menu
-    });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/flowbite@1.5.0/dist/flowbite.min.js"></script>
 
 {% block script %}
-    
+
 {% endblock %}
-    
+
 </html>

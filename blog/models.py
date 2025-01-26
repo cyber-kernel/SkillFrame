@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
-
+from ckeditor_uploader.fields import RichTextUploadingField
 # Create your models here.
 
 
@@ -11,7 +11,7 @@ class Category(models.Model):
         upload_to="category_images/", null=True, blank=True
     )
     slug = models.SlugField(max_length=30, unique=True)
-    description = models.TextField(max_length=150, null=True, blank=True)
+    description = models.TextField(max_length=400, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
@@ -32,7 +32,7 @@ class Post(models.Model):
     title = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
     description = models.TextField()
-    content = models.TextField()
+    content = RichTextUploadingField()
     thumbnail = models.ImageField(
         upload_to="thumbnails/Y/%m/%d/", null=True, blank=True
     )
