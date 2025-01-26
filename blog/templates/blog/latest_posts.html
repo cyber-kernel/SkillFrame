@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+
+{% block title %}
+| Blog
+{% endblock %}
+
+{% block style %}
+<!-- Tailwind CSS CDN -->
+{% endblock %}
+
+{% block body %}
+<div class="bg-gray-900 min-h-screen">
+    <!-- Header Section -->
+    <header class="bg-gray-900 text-center py-20">
+        <div class="container mx-auto px-6 text-white">
+            <h1 class="text-5xl font-bold mb-4 animate__animated animate__fadeIn animate__delay-2s">
+                <span class="text-green-500">Stay</span> Updated With Our <span class="text-cyan-400">Latest</span>
+                Blogs
+            </h1>
+            <p class="text-lg mb-8 animate__animated animate__fadeIn animate__delay-3s">
+                Explore fresh articles and exciting updates to keep you inspired.
+            </p>
+            <a href="#blogs-section"
+                class="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-darkblue-700 text-white font-semibold rounded-lg shadow-lg hover:from-cyan-700 hover:to-blue-600 transition-all duration-300 animate__animated animate__fadeIn animate__delay-4s">
+                View Latest Blogs
+            </a>
+        </div>
+    </header>
+
+
+    <!-- Blog List Section -->
+    <section id="blogs-section" class="container mx-auto px-6 py-4">
+        <h2
+            class="text-3xl font-extrabold text-center text-gray-100 mb-12 animate__animated animate__fadeIn animate__delay-5s">
+            <span class="text-green-500">View</span> Latest <span class="text-cyan-400">Blogs</span>
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Blog Card 1 -->
+            {% for post in all_latest_posts %}
+            <div
+                class="relative bg-gray-800 text-gray-100 rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 group">
+                <!-- Floating Category Badge -->
+                <span
+                    class="absolute top-4 left-4 bg-gradient-to-r from-cyan-600 to-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:from-green-600 group-hover:to-cyan-700">
+                    {{ post.category.name }}
+                </span>
+                <!-- Post Thumbnail -->
+                <img src="{{ post.thumbnail.url }}" alt="Blog Image"
+                    class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
+                <div class="p-6">
+                    <!-- Post Title -->
+                    <h3 class="text-xl font-bold group-hover:text-cyan-700 transition-colors duration-300">
+                        {{ post.title }}
+                    </h3>
+                    <!-- Description -->
+                    <p class="mt-2 text-gray-300">{{ post.description|truncatewords:10 }}</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <div class="text-sm text-gray-500">
+                            <span class="block">Published on: {{ post.published_on|date:"F j, Y" }}</span>
+                            <span class="block">Views: {{ post.views }}</span>
+                        </div>
+                        <a href="{% url 'blog:view_post' post.slug %}"
+                            class="inline-block px-4 py-2 bg-gradient-to-r from-green-600 to-cyan-700 text-white rounded-md font-medium hover:from-cyan-700 hover:to-blue-600 transition-all duration-300">
+                            Read More
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
