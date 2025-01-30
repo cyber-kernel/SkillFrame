@@ -50,42 +50,141 @@
         /* Cyan color on hover */
         transition: color 0.3s ease-in-out;
     }
+
+    /* Mobile Layout Adjustment */
+    @media (max-width: 768px) {
+
+        /* Make the author highlight appear above the content */
+        .lg\:w-3\/4 {
+            order: 1;
+            /* Make it appear first in mobile view */
+        }
+
+        .authorHighlight {
+            margin-bottom: 20px;
+            /* Space between author highlight and content */
+        }
+
+        .lg\:w-1\/4 {
+            display: none;
+            /* Hide sidebar on small screens */
+        }
+
+        .bg-gray-900 {
+            padding: 10px;
+        }
+
+        .container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block body %}
 <div class="bg-gray-900 min-h-screen text-gray-100 font-sans">
     <div class="container mx-auto p-6 lg:flex lg:gap-8">
-        <!-- Main Content Section -->
-        <div class="lg:w-3/4 bg-gray-800 shadow-lg rounded-lg overflow-hidden slideIn">
-            <!-- Post Thumbnail -->
-            <img src="{{ post.thumbnail.url }}" alt="Post Thumbnail" class="w-full h-64 object-cover">
-
-            <!-- Post Content -->
-            <div class="p-8">
-                <h1 class="text-3xl font-bold text-cyan-400">{{ post.title }}</h1>
-                <p class="text-sm text-gray-400 mt-2">
-                    Published on: {{ post.published_on|timesince }} | Views: {{ post.views }}</p>
-                <p class="text-sm text-green-400 mt-1">Category: {{ post.category.name }}</p>
-
-                <div class="mt-4 text-gray-300 leading-relaxed">
-                    <p>{{ post.content|safe }}</p>
+        <!-- Main Content & Comments -->
+        <div class="lg:w-3/4 lg:flex lg:flex-col gap-6">
+            <!-- Main Content Section -->
+            <div class="bg-gray-800 shadow-lg rounded-lg overflow-hidden slideIn">
+                <img src="{{ post.thumbnail.url }}" alt="Post Thumbnail" class="w-full object-cover">
+                <div class="p-8">
+                    <h1 class="text-3xl font-bold text-cyan-400">{{ post.title }}</h1>
+                    <p class="text-sm text-gray-400 mt-2">
+                        Published on: {{ post.published_on|timesince }} | Views: {{ post.views }}
+                    </p>
+                    <p class="text-sm text-green-400 mt-1">Category: {{ post.category.name }}</p>
+                    <div class="mt-4 text-gray-300 leading-relaxed">
+                        <p>{{ post.content|safe }}</p>
+                    </div>
                 </div>
             </div>
+            <!-- Comments Section -->
+            <section class="w-full bg-gray-800 p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold text-yellow-400 mb-4">Comments</h2>
+
+                <!-- Display Success Message -->
+                {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                    <div class="alert alert-success bg-green-500 text-white p-2 rounded-md">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Comment Form -->
+                <form method="POST" class="mb-6">
+                    {% csrf_token %}
+                    <textarea name="comment" rows="3"
+                        class="w-full p-2 bg-gray-700 border border-cyan-500 rounded-md text-white focus:ring-2 focus:ring-cyan-400"
+                        placeholder="Write a comment..." style="max-height: 150px; overflow-y: auto;"></textarea>
+                    <button type="submit"
+                        class="mt-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition">
+                        Post Comment
+                    </button>
+                </form>
+
+                <!-- Comment List -->
+                <div id="comment-section">
+                    {% for comment_data in comments_with_replies %}
+                    <div class="bg-gray-700 p-4 rounded-md shadow-sm mb-4 border border-blue-500">
+                        <p class="font-semibold text-yellow-300">{{ comment_data.comment.author.username }}</p>
+                        <p class="text-gray-200">{{ comment_data.comment.comment }}</p>
+                        <p class="text-sm text-gray-400">Posted on: {{ comment_data.comment.created_on }}</p>
+
+                        <!-- Reply Button and Form -->
+                        <button onclick="toggleReplyBox({{ comment_data.comment.id }})"
+                            class="text-cyan-400 text-sm mt-2">Reply</button>
+
+                        <form method="POST" action="{% url 'blog:post_reply' comment_data.comment.id %}"
+                            id="reply-box-{{ comment_data.comment.id }}" class="hidden mt-3">
+                            {% csrf_token %}
+                            <textarea name="reply" rows="2"
+                                class="w-full p-2 bg-gray-700 border border-cyan-500 rounded-md text-white focus:ring-2 focus:ring-cyan-400"
+                                placeholder="Write a reply..." style="max-height: 100px; overflow-y: auto;"></textarea>
+                            <button type="submit"
+                                class="mt-2 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
+                                Reply
+                            </button>
+                        </form>
+
+                        <!-- Replies -->
+                        <div class="ml-6 mt-3">
+                            {% for reply in comment_data.replies %}
+                            <div class="bg-gray-600 p-3 border-l-4 border-green-500 rounded-md shadow-sm mt-2">
+                                <p class="font-semibold text-yellow-300">{{ reply.author.username }}</p>
+                                <p class="text-gray-200">{{ reply.reply }}</p>
+                                <p class="text-sm text-gray-400">Replied on: {{ reply.published_on }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+
         </div>
 
-        <!-- Sidebar Section with Author -->
+
+
+
+        <!-- Sidebar Section -->
         <div class="lg:w-1/4 mt-8 lg:mt-0">
             <div class="sticky top-8 space-y-6">
-                <div class="authorHighlight">
-                    <h2 class="text-xl font-semibold text-cyan-400 mb-2">Author</h2>
-                    <p class="text-lg text-blue-300 font-bold">{{ post.author.username }}</p>
+                <!-- Author Highlight Section -->
+                <div
+                    class="authorHighlight bg-gradient-to-r from-teal-500 to-cyan-600 text-white p-6 rounded-lg shadow-lg mb-6 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl">
+                    <h2 class="text-xl font-semibold mb-2">Author</h2>
+                    <p class="text-lg font-bold">{{ post.author.username }}</p>
                 </div>
 
+                <!-- Similar Posts Section -->
                 <h2 class="text-xl font-semibold text-cyan-400 mt-8">Similar Posts</h2>
-
-                <!-- Similar Post Cards -->
-
                 {% for post in category_posts %}
                 <div
                     class="bg-gray-800 shadow-lg rounded-lg overflow-hidden card-hover group transition-all duration-300">
@@ -100,7 +199,8 @@
                     <div class="p-4">
                         <h3
                             class="text-lg font-bold text-blue-400 card-title group-hover:text-cyan-400 transition-colors duration-300">
-                            {{ post.title }}</h3>
+                            {{ post.title }}
+                        </h3>
                         <p class="text-sm text-gray-400 mt-2">{{ post.description|truncatewords:20 }}</p>
                         <a href="{% url 'blog:view_post' post.slug %}"
                             class="inline-block mt-4 text-sm px-3 py-2 bg-gradient-to-r from-green-600 to-cyan-700 text-white rounded-md font-medium hover:from-cyan-700 hover:to-blue-600 transition-all duration-300">
@@ -109,22 +209,26 @@
                     </div>
                 </div>
                 {% endfor %}
-                <!-- View More Button -->
                 <div class="text-center mt-6">
                     <button
                         class="px-6 py-3 bg-gradient-to-r from-green-600 to-cyan-700 text-white rounded-full font-semibold text-lg shadow-md hover:from-cyan-700 hover:to-blue-600 transition-transform transform hover:scale-110 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50">
                         View More
                     </button>
                 </div>
-
             </div>
         </div>
+
     </div>
 </div>
 {% endblock %}
 
 {% block script %}
+
+
 <script>
-    // Optional: Add custom interactivity or animations here
+    function toggleReplyBox(commentId) {
+        let replyBox = document.getElementById('reply-box-' + commentId);
+        replyBox.classList.toggle('hidden');
+    }
 </script>
 {% endblock %}
