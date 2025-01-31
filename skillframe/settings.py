@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "account.apps.AccountConfig",
     "todo.apps.TodoConfig",
     "blog.apps.BlogConfig",
+    "webhook.apps.WebhookConfig",
     "ckeditor",
     "tailwind",
     "theme",
