@@ -12,7 +12,34 @@ def all_blogs(request):
     return render(request, "blog/all_blogs.html", {"all_posts": all_posts})
 
 
+def handle_comments(request, post):
+    """Handles comment retrieval and submission for a blog post."""
+    # Fetch active comments and their replies
+    comments = post.comments.filter(is_active=True)
+    comment_replies = CommentReply.objects.filter(is_active=True)
+
+    # Creating a dictionary of comments and their replies
+    comments_with_replies = [
+        {"comment": comment, "replies": comment_replies.filter(comment=comment)}
+        for comment in comments
+    ]
+
+    # Handle comment submission
+    if request.method == "POST" and "comment" in request.POST:
+        comment_text = request.POST.get("comment")
+        if request.user.is_authenticated and comment_text:
+            Comment.objects.create(
+                post=post, author=request.user, comment=comment_text, is_active=True
+            )
+            messages.success(request, "Your comment has been posted!")
+        else:
+            messages.error(request, "You must be logged in to post a comment.")
+
+    return comments_with_replies
+
+
 def view_post(request, slug):
+    """Handles blog post view and interactions."""
     # Fetch the post based on the slug
     post = (
         Post.objects.filter(is_active=True, is_published=True, slug=slug)
@@ -33,26 +60,8 @@ def view_post(request, slug):
         is_active=True, is_published=True, category=post.category
     ).exclude(slug=slug)[:3]
 
-    # Fetch the comments and their replies
-    comments = post.comments.filter(is_active=True)
-    comment_replies = CommentReply.objects.filter(is_active=True)
-
-    # Creating a dictionary of comments and their replies
-    comments_with_replies = []
-    for comment in comments:
-        replies = comment_replies.filter(comment=comment)
-        comments_with_replies.append({"comment": comment, "replies": replies})
-
-    # Handle comment submission
-    if request.method == "POST" and "comment" in request.POST:
-        comment_text = request.POST.get("comment")
-        if request.user.is_authenticated and comment_text:
-            Comment.objects.create(
-                post=post, author=request.user, comment=comment_text, is_active=True
-            )
-            messages.success(request, "Your comment has been posted!")
-        else:
-            messages.error(request, "You must be logged in to post a comment.")
+    # Fetch comments using the new function
+    comments_with_replies = handle_comments(request, post)
 
     # Prepare the context
     ctx = {
