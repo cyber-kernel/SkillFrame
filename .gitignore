@@ -8,5 +8,6 @@ env.py
 static_prod/
 .vscode/
 venv/
+dev/
 .cache/
 static/ckeditor/
