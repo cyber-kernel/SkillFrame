@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.contrib import messages
-from django.db.models import F
+from django.db.models import F, Count
 from .models import Post, Comment, CommentReply, Category
 from django.contrib.auth.decorators import login_required
 
