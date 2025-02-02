@@ -3,6 +3,8 @@
 ## hey i want to create a django project same as webhook.site in which a user will come adn click on a button and a link will be generated and user can select the time for how much time the link will be valid and working after that is something request on that link then the whole resuest will be shown and if user wants then he can also see the response of that request by a button named send request
 
 
+## i am using default use rmodel provided by django and i dont want to difrrentiate headers ip adn other things i simpoly want to store the full request as it si like webhook site and show on frontend just simple now write models according to this
+
 ## this is my webhook_home template create a beutifull responsive animated cool and modern template for this and tell users what what they can perform in this webhook in a hackers and devlopers perspective add cool content and use colors green cyan blue dark blue and yellow
 
 ### Phase 1: Project Setup

@@ -85,6 +85,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'webhook.context_processors.domain_name',
             ],
         },
     },
@@ -92,6 +93,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "skillframe.wsgi.application"
 
+
+DOMAIN_NAME = "https://skillframe.org"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases

@@ -4,5 +4,5 @@ from . import views
 app_name = "webhook"
 
 urlpatterns = [
-    path("webhook/", views.webhook_home, name="webhook_home"),
+    path("", views.webhook_home, name="webhook_home"),
 ]

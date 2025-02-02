@@ -21,10 +21,6 @@
         background-color: #00bcd4;
         transform: scale(1.05);
     }
-
-    .webhook-output {
-        display: none;
-    }
 </style>
 {% endblock %}
 
@@ -32,7 +28,8 @@
 <div class="bg-gray-900 text-white min-h-screen">
 
     <!-- Hero Section -->
-    <section class="flex flex-col items-center justify-center py-20 bg-gray-900 text-center animate__animated animate__fadeIn animate__delay-1s">
+    <section
+        class="flex flex-col items-center justify-center py-20 bg-gray-900 text-center animate__animated animate__fadeIn animate__delay-1s">
         <h1 class="text-5xl md:text-6xl font-bold text-white mb-4">
             Welcome to the <span class="text-yellow-400">Webhook Generator Hub</span>
         </h1>
@@ -55,74 +52,154 @@
     <section class="py-16 px-6 bg-gray-900 text-center animate__animated animate__fadeIn animate__delay-2s">
         <div class="max-w-6xl mx-auto text-center">
             <h2 class="text-3xl md:text-4xl font-bold text-white mb-12">Why Use Webhooks?</h2>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div class="card bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300">
                     <h3 class="text-2xl font-semibold text-cyan-500 mb-4">Instant Webhook Generation</h3>
                     <p class="text-gray-300">
-                        Generate webhook URLs quickly and easily with customizable expiration times. Great for developers working on short-term integrations.
+                        Generate webhook URLs quickly and easily with customizable expiration times. Great for
+                        developers working on short-term integrations.
                     </p>
                 </div>
 
                 <div class="card bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300">
                     <h3 class="text-2xl font-semibold text-cyan-500 mb-4">Powerful Customization</h3>
                     <p class="text-gray-300">
-                        Tailor your webhooks by setting expiration times and integrating them into your existing projects seamlessly.
+                        Tailor your webhooks by setting expiration times and integrating them into your existing
+                        projects seamlessly.
                     </p>
                 </div>
 
                 <div class="card bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300">
                     <h3 class="text-2xl font-semibold text-cyan-500 mb-4">Secure & Reliable</h3>
                     <p class="text-gray-300">
-                        Ensure secure communication between services with time-limited webhooks, reducing the risk of misuse.
+                        Ensure secure communication between services with time-limited webhooks, reducing the risk of
+                        misuse.
                     </p>
                 </div>
             </div>
         </div>
     </section>
 
+
+
+
     <!-- Webhook Generation Section -->
     <section class="py-20 px-6 bg-gray-900 text-center animate__animated animate__fadeIn animate__delay-3s">
         <div class="max-w-3xl mx-auto">
             <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Generate Your Custom Webhook</h2>
             <p class="text-lg md:text-xl text-gray-300 mb-8">
-                Easily create webhook URLs with custom expiration times, and integrate them into your projects with ease.
+                Easily create webhook URLs with custom expiration times, and integrate them into your projects with
+                ease.
             </p>
 
             <!-- Webhook Form -->
-            <div class="bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 mb-12">
-                <div class="mb-6">
-                    <label for="expiry" class="text-lg font-semibold text-cyan-500">Select Expiry Time</label>
-                    <select id="expiry" name="expiry"
-                        class="w-full p-4 bg-gray-700 text-white rounded-lg shadow-lg focus:ring-2 focus:ring-cyan-500 mt-2">
-                        <option value="1" selected>1 Hour</option>
-                        <option value="6">6 Hours</option>
-                        <option value="12">12 Hours</option>
-                        <option value="24">24 Hours</option>
-                        <option value="48">48 Hours</option>
-                        <option value="72">72 Hours</option>
-                        <option value="168">1 Week</option>
-                    </select>
-                </div>
+            <form method="POST" action="{% url 'webhook:webhook_home' %}">
+                {% csrf_token %}
+                <div class="bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 mb-12">
+                    <div class="mb-6">
+                        <label for="expiry" class="text-lg font-semibold text-cyan-500">Select Expiry Time</label>
+                        <select id="expiry" name="expiration_time"
+                            class="w-full p-4 bg-gray-700 text-white rounded-lg shadow-lg focus:ring-2 focus:ring-cyan-500 mt-2">
+                            <option value="60" selected>1 Hour</option>
+                            <option value="360">6 Hours</option>
+                            <option value="720">12 Hours</option>
+                            <option value="1440">24 Hours</option>
+                            <option value="2880">48 Hours</option>
+                            <option value="4320">72 Hours</option>
+                            <option value="10080">1 Week</option>
+                        </select>
+                    </div>
 
-                <div class="flex justify-center mb-6">
-                    <button id="generate-webhook-btn"
-                        class="webhook-btn px-8 py-4 bg-cyan-600 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-cyan-700 transition-all duration-300 transform hover:scale-105">
-                        Generate Webhook
+                    <div class="flex justify-center mb-6">
+                        <button type="submit"
+                            class="webhook-btn px-8 py-4 bg-cyan-600 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-cyan-700 transition-all duration-300 transform hover:scale-105">
+                            Generate Webhook
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Webhook Output -->
+            {% if webhook %}
+            <div class="webhook-output mt-6 text-center" data-expiry="{{ webhook.expires_at|date:'c' }}">
+                <p class="text-2xl text-gray-300 mb-2">Your Webhook URL:</p>
+
+                <!-- Container for URL and Copy Button using flex to center -->
+                <div class="flex justify-center items-center">
+                    <div id="webhook-url"
+                        class="bg-gray-700 p-6 rounded-lg text-cyan-400 font-semibold overflow-auto text-sm mr-4">
+                        {{ domain_name }}/webhook/{{ webhook.uuid }}/
+                    </div>
+
+                    <!-- Copy Button next to the URL -->
+                    <button id="copy-button"
+                        class="py-2 px-4 bg-cyan-500 text-white rounded-md hover:bg-cyan-600 focus:outline-none">
+                        Copy
                     </button>
                 </div>
 
-                <!-- Webhook Output -->
-                <div id="webhook-output" class="webhook-output mt-6 hidden text-center">
-                    <p class="text-lg text-gray-300 mb-2">Your Webhook URL:</p>
-                    <div id="webhook-url"
-                        class="bg-gray-700 p-6 rounded-lg text-cyan-400 font-semibold overflow-auto text-sm"></div>
-                </div>
+                <!-- Countdown Timer centered with the rest -->
+                <p class="text-lg text-gray-300 mt-4">Expires in: <span id="countdown-timer"
+                        class="font-semibold text-green-400"></span></p>
             </div>
+            {% else %}
+            <!-- No Webhook Output -->
+            <div class="webhook-output mt-6 text-center">
+                <p class="text-2xl text-gray-300 mb-2">No Webhook Available</p>
+                <p class="text-lg text-gray-300 mt-4">You can create a webhook to get started.</p>
+            </div>
+            {% endif %}
+
+
+
+
+
+
+
         </div>
     </section>
-
 </div>
+
+<script>
+    // Function to copy the Webhook URL to clipboard
+    document.getElementById('copy-button').addEventListener('click', function () {
+        var webhookUrl = document.getElementById('webhook-url').textContent;
+        navigator.clipboard.writeText(webhookUrl).then(function () {
+            alert('Webhook URL copied to clipboard!');
+        }, function (err) {
+            console.error('Error copying text: ', err);
+        });
+    });
+
+    // Countdown Timer Logic
+    function updateCountdown(expiryDate) {
+        var timerElement = document.getElementById('countdown-timer');
+        var currentTime = new Date();
+        var timeLeft = expiryDate - currentTime;
+
+        if (timeLeft <= 0) {
+            timerElement.textContent = 'Expired';
+            return;
+        }
+
+        var hours = Math.floor(timeLeft / (1000 * 60 * 60));
+        var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        timerElement.textContent = `${hours}h ${minutes}m ${seconds}s`;
+
+        setTimeout(function () {
+            updateCountdown(expiryDate);
+        }, 1000);
+    }
+
+    // Pass the expiry date from the data attribute
+    {% if webhook %}
+    var expiryDate = new Date(document.querySelector('.webhook-output').getAttribute('data-expiry')).getTime();
+    updateCountdown(expiryDate);
+    {% endif %}
+</script>
 
 {% endblock %}
 
@@ -130,11 +207,14 @@
 <!-- Add any custom JavaScript here -->
 <script>
     // Example for generating webhook URL and displaying the output
-    document.getElementById('generate-webhook-btn').addEventListener('click', function() {
+    document.getElementById('generate-webhook-btn').addEventListener('click', function () {
         const expiry = document.getElementById('expiry').value;
         const webhookUrl = `https://example.com/webhook?expiry=${expiry}`;
         document.getElementById('webhook-url').textContent = webhookUrl;
         document.getElementById('webhook-output').classList.remove('hidden');
     });
+
+
+
 </script>
 {% endblock %}
