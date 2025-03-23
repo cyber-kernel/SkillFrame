@@ -13,11 +13,12 @@ class WebhookURL(models.Model):
     def check_expired(self):
         """Deactivate webhook if expired."""
         if now() > self.expires_at and self.is_active:
-            self.is_active = False
-            self.save()
+            self.delete()
 
     def __str__(self):
         return f"Webhook {self.uuid} (Active: {self.is_active})"
+
+
 
 class WebhookRequest(models.Model):
     webhook = models.ForeignKey(WebhookURL, on_delete=models.CASCADE, related_name="requests")

@@ -9,17 +9,25 @@ from .models import WebhookURL, WebhookRequest
 from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def webhook_home(request):
     # Ensure the user is logged in.
     if not request.user.is_authenticated:
-        return redirect("login")  # Adjust as needed based on your authentication flow.
+        return redirect("login")  # Adjust as needed.
 
-    webhook = None
+    # Retrieve all webhooks for the current user.
     webhooks = WebhookURL.objects.filter(user=request.user)
-    # Get the first valid, active webhook (non-expired).
-    existing_webhook = webhooks.filter(
-        expires_at__gt=timezone.now(), is_active=True
-    ).first()
+
+    # Check and delete any expired webhooks.
+    for wh in webhooks:
+        wh.check_expired()  # This will delete the webhook if it's expired.
+
+    # Refresh the webhooks queryset after deletion.
+    webhooks = WebhookURL.objects.filter(user=request.user)
+
+    # Get valid (non-expired and active) webhooks.
+    valid_webhooks = webhooks.filter(expires_at__gt=timezone.now(), is_active=True)
+    existing_webhook = valid_webhooks.first()
 
     if request.method == "POST":
         # Validate the expiration time input.
@@ -31,7 +39,7 @@ def webhook_home(request):
             messages.error(request, "Invalid expiration time provided.")
             return redirect("webhook:webhook_home")
 
-        # Only create a new webhook if there's no valid one.
+        # Only create a new webhook if no valid webhook exists.
         if not existing_webhook:
             new_webhook = WebhookURL.objects.create(
                 user=request.user,
@@ -39,20 +47,20 @@ def webhook_home(request):
                 expires_at=timezone.now() + timedelta(minutes=expiration_time),
             )
             messages.success(request, "Webhook successfully created!")
-            webhook = new_webhook
-            # Refresh list of webhooks.
+            existing_webhook = new_webhook
+            # Refresh webhooks and valid_webhooks.
             webhooks = WebhookURL.objects.filter(user=request.user)
+            valid_webhooks = webhooks.filter(
+                expires_at__gt=timezone.now(), is_active=True
+            )
         else:
             messages.info(request, "You already have a valid webhook.")
-            webhook = existing_webhook
 
-    # Check and update expiration status if needed.
-    if existing_webhook:
-        existing_webhook.check_expired()
-        if not existing_webhook.is_active:
-            webhook = None
+    # Recalculate valid webhooks after POST processing.
+    valid_webhooks = webhooks.filter(expires_at__gt=timezone.now(), is_active=True)
+    existing_webhook = valid_webhooks.first()
 
-    # Collect all captured requests for the logged-in user's webhooks.
+    # Collect all captured requests for the user's webhooks.
     captured_requests = WebhookRequest.objects.filter(webhook__in=webhooks).order_by(
         "-received_at"
     )
@@ -60,7 +68,11 @@ def webhook_home(request):
     return render(
         request,
         "webhook/webhook_home.html",
-        {"webhook": webhook, "webhooks": webhooks, "requests": captured_requests},
+        {
+            "webhook": existing_webhook,
+            "webhooks": webhooks,
+            "requests": captured_requests,
+        },
     )
 
 
@@ -71,12 +83,18 @@ def capture_webhook(request, uuid):
     and store it in the database.
     """
     try:
-        # Look up the webhook by UUID and ensure it's active and not expired.
-        webhook = WebhookURL.objects.get(
-            uuid=uuid, expires_at__gt=timezone.now(), is_active=True
-        )
+        # Look up the webhook by UUID
+        webhook = WebhookURL.objects.get(uuid=uuid)
+
+        # Check if the webhook has expired
+        if webhook.expires_at <= timezone.now():
+            webhook.delete()
+            return HttpResponse(
+                "Webhook has expired and has been removed.", status=410
+            )  # 410 Gone
+
     except WebhookURL.DoesNotExist:
-        return HttpResponse("Webhook not found or expired.", status=404)
+        return HttpResponse("Webhook not found.", status=404)
 
     # Attempt to decode the raw request body.
     try:
@@ -101,17 +119,21 @@ def capture_webhook(request, uuid):
     return JsonResponse({"message": "Request captured successfully."})
 
 
-
 @login_required
 def get_requests_json(request):
     # Get all webhooks for the logged-in user.
     webhooks = WebhookURL.objects.filter(user=request.user)
     # Fetch all requests for those webhooks, ordered by received time (most recent first)
-    requests_qs = WebhookRequest.objects.filter(webhook__in=webhooks).order_by('-received_at')
-    data = [{
-        "method": req.method,
-        "body": req.body,
-        "headers": req.headers,
-        "received_at": req.received_at.strftime("%Y-%m-%d %H:%M:%S")
-    } for req in requests_qs]
+    requests_qs = WebhookRequest.objects.filter(webhook__in=webhooks).order_by(
+        "-received_at"
+    )
+    data = [
+        {
+            "method": req.method,
+            "body": req.body,
+            "headers": req.headers,
+            "received_at": req.received_at.strftime("%Y-%m-%d %H:%M:%S"),
+        }
+        for req in requests_qs
+    ]
     return JsonResponse({"requests": data})
