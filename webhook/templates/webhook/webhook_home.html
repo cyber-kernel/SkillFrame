@@ -21,6 +21,29 @@
         background-color: #00bcd4;
         transform: scale(1.05);
     }
+
+
+    /* Custom scrollbar styling for WebKit browsers */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #2d3748;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #00bcd4;
+        border-radius: 10px;
+        border: 2px solid #2d3748;
+    }
+
+    /* Firefox scrollbar styling */
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #00bcd4 #2d3748;
+    }
 </style>
 {% endblock %}
 
@@ -80,9 +103,6 @@
             </div>
         </div>
     </section>
-
-
-
 
     <!-- Webhook Generation Section -->
     <section class="py-20 px-6 bg-gray-900 text-center animate__animated animate__fadeIn animate__delay-3s">
@@ -150,16 +170,140 @@
                 <p class="text-lg text-gray-300 mt-4">You can create a webhook to get started.</p>
             </div>
             {% endif %}
-
-
-
-
-
-
-
         </div>
     </section>
+
+
+
+    <!-- Captured Webhook Requests Section -->
+    <section class="py-10 px-4 bg-gray-800 text-white animate__animated animate__fadeIn">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-cyan-400 mb-4 text-center">
+                Captured Requests
+            </h2>
+            <div id="requests-container">
+                {% if requests %}
+                <!-- Initial render: Tab Container -->
+                <div class="bg-gray-900 rounded-lg shadow-lg">
+                    <!-- Tab Header (Scrollable) -->
+                    <div class="overflow-x-auto border-b border-gray-700 custom-scrollbar">
+                        <div class="flex whitespace-nowrap" id="tab-header">
+                            {% for req in requests %}
+                            <button
+                                class="tab-btn flex-1 px-4 py-2 text-center bg-gray-800 {% if forloop.first %}text-cyan-400 border-b-2 border-cyan-400{% else %}text-gray-400 hover:text-cyan-400 hover:border-b-2 hover:border-cyan-400{% endif %} focus:outline-none"
+                                data-tab="tab{{ forloop.counter }}">
+                                Request {{ forloop.counter }}
+                            </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- Tab Contents -->
+                    <div class="relative" id="tab-contents">
+                        {% for req in requests %}
+                        <div id="tab{{ forloop.counter }}"
+                            class="tab-pane {% if not forloop.first %}hidden{% endif %} p-4 text-sm bg-black text-white rounded-b-lg max-h-64 overflow-auto relative custom-scrollbar">
+                            <button onclick="copyText('tab{{ forloop.counter }}-content')"
+                                class="absolute top-2 right-2 bg-cyan-500 text-white px-2 py-1 rounded hover:bg-cyan-600 focus:outline-none">
+                                Copy
+                            </button>
+                            <pre id="tab{{ forloop.counter }}-content" class="whitespace-pre-wrap">{{ req.body }}</pre>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-center text-gray-300">No requests captured yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
 </div>
+
+<!-- jQuery (you can use a CDN or your local version) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function updateCapturedRequests() {
+        // Store the id of the currently active tab (if any)
+        var activeTab = $(".tab-btn.text-cyan-400").attr("data-tab");
+
+        $.ajax({
+            url: "{% url 'webhook:get_requests_json' %}",
+            method: "GET",
+            success: function (data) {
+                // If no requests are returned, display a no-data message
+                if (data.requests.length === 0) {
+                    $("#requests-container").html('<p class="text-center text-gray-300">No requests captured yet.</p>');
+                    return;
+                }
+
+                let tabHeaderHTML = "";
+                let tabContentsHTML = "";
+
+                data.requests.forEach((req, index) => {
+                    let currentTab = "tab" + (index + 1);
+                    // Determine the active class for the header.
+                    // If there's an activeTab saved and it matches, or if none is saved then default first tab active.
+                    let activeClass = "";
+                    if ((activeTab && activeTab === currentTab) || (!activeTab && index === 0)) {
+                        activeClass = "text-cyan-400 border-b-2 border-cyan-400";
+                    } else {
+                        activeClass = "text-gray-400 hover:text-cyan-400 hover:border-b-2 hover:border-cyan-400";
+                    }
+
+                    tabHeaderHTML += `<button class="tab-btn flex-1 px-4 py-2 text-center bg-gray-800 ${activeClass} focus:outline-none" data-tab="${currentTab}">
+                                Request ${index + 1}
+                              </button>`;
+
+                    // Determine visibility for tab content: visible if active, hidden otherwise.
+                    let contentClass = "";
+                    if ((activeTab && activeTab === currentTab) || (!activeTab && index === 0)) {
+                        contentClass = "";
+                    } else {
+                        contentClass = "hidden";
+                    }
+
+                    tabContentsHTML += `<div id="${currentTab}" class="tab-pane ${contentClass} p-4 text-sm bg-black text-white rounded-b-lg max-h-64 overflow-auto relative custom-scrollbar">
+                                  <button onclick="copyText('${currentTab}-content')" class="absolute top-2 right-2 bg-cyan-500 text-white px-2 py-1 rounded hover:bg-cyan-600 focus:outline-none">
+                                    Copy
+                                  </button>
+                                  <pre id="${currentTab}-content" class="whitespace-pre-wrap">${req.body}</pre>
+                                </div>`;
+                });
+
+                // Replace the existing header and content with the newly generated HTML
+                $("#tab-header").html(tabHeaderHTML);
+                $("#tab-contents").html(tabContentsHTML);
+
+                // Reattach tab switching events
+                $(".tab-btn").off('click').on('click', function () {
+                    $(".tab-btn").removeClass('text-cyan-400 border-b-2 border-cyan-400');
+                    $(".tab-pane").addClass('hidden');
+                    $(this).addClass('text-cyan-400 border-b-2 border-cyan-400');
+                    let tabId = $(this).attr('data-tab');
+                    $("#" + tabId).removeClass('hidden');
+                });
+            },
+            error: function (err) {
+                console.error("Failed to update captured requests", err);
+            }
+        });
+    }
+
+    // Poll the JSON endpoint every 5 seconds
+    setInterval(updateCapturedRequests, 5000);
+
+    // Copy to clipboard functionality remains unchanged
+    function copyText(elementId) {
+        const text = document.getElementById(elementId).textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Copied to clipboard!');
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+    }
+</script>
+
 
 <script>
     // Function to copy the Webhook URL to clipboard
@@ -199,6 +343,33 @@
     var expiryDate = new Date(document.querySelector('.webhook-output').getAttribute('data-expiry')).getTime();
     updateCountdown(expiryDate);
     {% endif %}
+
+
+    // Tab switching functionality
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Reset button styles and hide all tab panes
+            tabButtons.forEach(b => b.classList.remove('text-cyan-400', 'border-b-2', 'border-cyan-400'));
+            tabPanes.forEach(pane => pane.classList.add('hidden'));
+
+            // Highlight the active button and show corresponding pane
+            btn.classList.add('text-cyan-400', 'border-b-2', 'border-cyan-400');
+            document.getElementById(btn.getAttribute('data-tab')).classList.remove('hidden');
+        });
+    });
+
+    // Copy to clipboard functionality for code blocks
+    function copyText(elementId) {
+        const text = document.getElementById(elementId).textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Copied to clipboard!');
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+    }
 </script>
 
 {% endblock %}
@@ -213,7 +384,6 @@
         document.getElementById('webhook-url').textContent = webhookUrl;
         document.getElementById('webhook-output').classList.remove('hidden');
     });
-
 
 
 </script>

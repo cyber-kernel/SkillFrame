@@ -2,7 +2,6 @@ from django.db import models
 import uuid
 from django.contrib.auth.models import User
 from django.utils.timezone import now
-# Create your models here.
 
 class WebhookURL(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -12,10 +11,20 @@ class WebhookURL(models.Model):
     is_active = models.BooleanField(default=True)
 
     def check_expired(self):
-        """deactivate webhook if expired"""
-        if now() > self.expires_at:
+        """Deactivate webhook if expired."""
+        if now() > self.expires_at and self.is_active:
             self.is_active = False
             self.save()
 
     def __str__(self):
         return f"Webhook {self.uuid} (Active: {self.is_active})"
+
+class WebhookRequest(models.Model):
+    webhook = models.ForeignKey(WebhookURL, on_delete=models.CASCADE, related_name="requests")
+    method = models.CharField(max_length=10)
+    headers = models.JSONField()
+    body = models.TextField(blank=True, null=True)
+    received_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Request for {self.webhook.uuid} at {self.received_at}"
