@@ -222,14 +222,24 @@
 
 <!-- jQuery (you can use a CDN or your local version) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 <script>
     function updateCapturedRequests() {
         // Store the id of the currently active tab (if any)
         var activeTab = $(".tab-btn.text-cyan-400").attr("data-tab");
 
+        // Save current scroll positions for all tab panes.
+        var scrollPositions = {};
+        $(".tab-pane").each(function () {
+            var id = $(this).attr("id");
+            scrollPositions[id] = $(this).scrollTop();
+        });
+
         $.ajax({
             url: "{% url 'webhook:get_requests_json' %}",
             method: "GET",
+            cache: false,  // disable caching to get fresh data
             success: function (data) {
                 // If no requests are returned, display a no-data message
                 if (data.requests.length === 0) {
@@ -243,7 +253,6 @@
                 data.requests.forEach((req, index) => {
                     let currentTab = "tab" + (index + 1);
                     // Determine the active class for the header.
-                    // If there's an activeTab saved and it matches, or if none is saved then default first tab active.
                     let activeClass = "";
                     if ((activeTab && activeTab === currentTab) || (!activeTab && index === 0)) {
                         activeClass = "text-cyan-400 border-b-2 border-cyan-400";
@@ -255,7 +264,7 @@
                                 Request ${index + 1}
                               </button>`;
 
-                    // Determine visibility for tab content: visible if active, hidden otherwise.
+                    // Determine visibility for tab content.
                     let contentClass = "";
                     if ((activeTab && activeTab === currentTab) || (!activeTab && index === 0)) {
                         contentClass = "";
@@ -264,18 +273,18 @@
                     }
 
                     tabContentsHTML += `<div id="${currentTab}" class="tab-pane ${contentClass} p-4 text-sm bg-black text-white rounded-b-lg max-h-64 overflow-auto relative custom-scrollbar">
-                                  <button onclick="copyText('${currentTab}-content')" class="absolute top-2 right-2 bg-cyan-500 text-white px-2 py-1 rounded hover:bg-cyan-600 focus:outline-none">
-                                    Copy
-                                  </button>
-                                  <pre id="${currentTab}-content" class="whitespace-pre-wrap">${req.body}</pre>
-                                </div>`;
+                                <button onclick="copyText('${currentTab}-content')" class="absolute top-2 right-2 bg-cyan-500 text-white px-2 py-1 rounded hover:bg-cyan-600 focus:outline-none">
+                                  Copy
+                                </button>
+                                <pre id="${currentTab}-content" class="whitespace-pre-wrap">${req.body}</pre>
+                              </div>`;
                 });
 
-                // Replace the existing header and content with the newly generated HTML
+                // Update the DOM elements.
                 $("#tab-header").html(tabHeaderHTML);
                 $("#tab-contents").html(tabContentsHTML);
 
-                // Reattach tab switching events
+                // Reattach tab switching events.
                 $(".tab-btn").off('click').on('click', function () {
                     $(".tab-btn").removeClass('text-cyan-400 border-b-2 border-cyan-400');
                     $(".tab-pane").addClass('hidden');
@@ -283,6 +292,11 @@
                     let tabId = $(this).attr('data-tab');
                     $("#" + tabId).removeClass('hidden');
                 });
+
+                // Restore scroll positions for each tab pane if available.
+                for (var id in scrollPositions) {
+                    $("#" + id).scrollTop(scrollPositions[id]);
+                }
             },
             error: function (err) {
                 console.error("Failed to update captured requests", err);
@@ -290,10 +304,15 @@
         });
     }
 
-    // Poll the JSON endpoint every 5 seconds
+    // Poll every 5 seconds.
     setInterval(updateCapturedRequests, 5000);
 
-    // Copy to clipboard functionality remains unchanged
+    // Immediately call updateCapturedRequests when the DOM is ready.
+    $(document).ready(function () {
+        updateCapturedRequests();
+    });
+
+    // Copy to clipboard functionality.
     function copyText(elementId) {
         const text = document.getElementById(elementId).textContent;
         navigator.clipboard.writeText(text).then(() => {
@@ -303,6 +322,9 @@
         });
     }
 </script>
+
+
+
 
 
 <script>
