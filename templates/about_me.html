@@ -247,100 +247,200 @@
 
 
 
-        <!-- Bug Zapper Challenge Section -->
-        <section class="bg-gray-900 text-white py-16 px-6 md:px-12">
+        <!-- The Hacker's Gauntlet: Ultimate Bug Hunter Edition -->
+        <section id="gauntlet" class="bg-gray-900 text-white py-16 px-6 md:px-12">
             <div class="max-w-3xl mx-auto text-center">
-                <h2 class="text-3xl font-bold text-cyan-400 mb-4 animate__animated animate__fadeInUp">
-                    Bug Zapper Challenge
+                <h2 class="text-3xl font-bold text-cyan-400 mb-4">The Hacker's Gauntlet: Ultimate Bug Hunter Edition
                 </h2>
-                <p class="text-lg text-gray-300 mb-8 animate__animated animate__fadeIn animate__delay-1s">
-                    Click on the bugs as quickly as you can! You have 30 seconds to zap as many as possible.
+                <p class="text-lg text-gray-300 mb-8">
+                    Test your bug-hunting and security skills with 10 challenging riddles from various fields: SQL
+                    injection, file upload vulnerabilities, magic bytes, binary exploitation, and more.
+                    You have 20 seconds per level. Answer correctly to move on, or click <strong>"I Quit"</strong> to
+                    reveal the answer and learn something new before continuing.
+                    Good luck, cyber warrior!
                 </p>
-                <!-- Game Container -->
-                <div id="game-container"
-                    class="relative bg-gray-800 border border-cyan-400 rounded-lg h-64 overflow-hidden mb-4">
-                    <!-- Bugs will appear here -->
+                <div id="challenge-container" class="bg-gray-800 border border-cyan-400 rounded-lg p-6 mb-4">
+                    <p id="level-question" class="text-xl font-mono mb-4"></p>
+                    <input type="text" id="answer-input" class="p-2 rounded-md text-black w-full"
+                        placeholder="Enter your answer here">
+                    <div class="mt-4">
+                        <button id="submit-answer"
+                            class="px-4 py-2 bg-gradient-to-r from-cyan-400 to-green-400 text-gray-900 font-bold rounded-md mr-2">Submit</button>
+                        <button id="quit-level" class="px-4 py-2 bg-red-500 text-white font-bold rounded-md">I
+                            Quit</button>
+                    </div>
+                    <p id="feedback" class="mt-4 text-lg"></p>
+                    <p id="timer" class="mt-2 text-lg"></p>
                 </div>
-                <div class="mb-4">
-                    <span class="text-xl font-bold">Score: </span><span id="score" class="text-xl">0</span>
-                </div>
-                <button id="start-game"
-                    class="px-8 py-4 bg-gradient-to-r from-cyan-400 to-green-400 text-gray-900 font-bold rounded-full shadow-lg hover:shadow-xl transition-transform duration-300">
-                    Start Game
-                </button>
-                <p id="game-message" class="mt-4 text-lg text-gray-300"></p>
+                <button id="restart-btn" class="hidden px-6 py-3 bg-red-500 text-white font-bold rounded-md">Restart
+                    Challenge</button>
             </div>
         </section>
 
-        <!-- Game Script -->
+        <!-- Challenge Script -->
         <script>
-            const gameContainer = document.getElementById("game-container");
-            const scoreDisplay = document.getElementById("score");
-            const startButton = document.getElementById("start-game");
-            const gameMessage = document.getElementById("game-message");
-            let score = 0;
-            let gameInterval;
-            let bugInterval;
-            const gameTime = 30; // seconds
+            // Define 10 hacking-themed levels with questions, correct answers, and an explanation (lesson) for each.
+            const levels = [
+                {
+                    question: "Level 1: I am a payload used to bypass login forms via SQL injection. What common string might be used?",
+                    answer: "' OR '1'='1",
+                    explanation: "Using ' OR '1'='1 can trick a vulnerable SQL query into always returning true. Always use parameterized queries to prevent SQL injection."
+                },
+                {
+                    question: "Level 2: I exploit file upload vulnerabilities by allowing an attacker to execute code. What file extension is most commonly abused on a PHP server?",
+                    answer: "php",
+                    explanation: "Attackers often upload files with a .php extension to execute malicious code. Validate file types and check magic bytes to mitigate this risk."
+                },
+                {
+                    question: "Level 3: I am the magic sequence that identifies a PDF file. What string do PDF files typically start with?",
+                    answer: "%PDF",
+                    explanation: "PDF files start with '%PDF'. Magic bytes help verify file types and prevent malicious file uploads by checking the file signature."
+                },
+                {
+                    question: "Level 4: I am a C function infamous for causing buffer overflows due to unchecked input. What function am I?",
+                    answer: "gets",
+                    explanation: "The gets() function doesn’t check the input length, making it vulnerable to buffer overflow attacks. Use safer alternatives like fgets()."
+                },
+                {
+                    question: "Level 5: I am a technique used in binary exploitation to bypass DEP by chaining existing code snippets. What is this technique called?",
+                    answer: "ROP",
+                    explanation: "ROP (Return-Oriented Programming) lets attackers hijack control flow without injecting code. It’s a critical concept in modern binary exploitation."
+                },
+                {
+                    question: "Level 6: I allow attackers to navigate out of restricted directories by exploiting unsanitized paths. What sequence is commonly used in directory traversal attacks?",
+                    answer: "../",
+                    explanation: "Directory traversal attacks use '../' sequences to move up the directory structure. Always sanitize file paths to prevent this."
+                },
+                {
+                    question: "Level 7: I allow attackers to inject malicious scripts into trusted web pages. What does XSS stand for?",
+                    answer: "Cross-Site Scripting",
+                    explanation: "XSS stands for Cross-Site Scripting, where unsanitized input is rendered as code. It’s vital to sanitize and escape output to prevent XSS."
+                },
+                {
+                    question: "Level 8: I exploit insecure configurations to include remote files, leading to code execution. What is my abbreviated name?",
+                    answer: "RFI",
+                    explanation: "RFI stands for Remote File Inclusion. It occurs when user-supplied input is used to include external files without proper validation."
+                },
+                {
+                    question: "Level 9: I trick authenticated users into executing unwanted actions on a website. What does CSRF stand for?",
+                    answer: "Cross-Site Request Forgery",
+                    explanation: "CSRF (Cross-Site Request Forgery) exploits the trust a site has in a user's browser. Implement CSRF tokens to secure your forms."
+                },
+                {
+                    question: "Level 10: In binary exploitation, I am the value stored on the stack that directs control flow when a function returns. What is this value called?",
+                    answer: "return address",
+                    explanation: "The return address is a key target in buffer overflow attacks. Overwriting it can redirect program execution. Protecting it is crucial for system security."
+                }
+            ];
 
-            function startGame() {
-                score = 0;
-                scoreDisplay.textContent = score;
-                gameMessage.textContent = "";
-                startButton.disabled = true;
-                gameContainer.innerHTML = "";
+            // DOM elements
+            const levelQuestion = document.getElementById("level-question");
+            const answerInput = document.getElementById("answer-input");
+            const submitAnswer = document.getElementById("submit-answer");
+            const quitLevel = document.getElementById("quit-level");
+            const feedback = document.getElementById("feedback");
+            const timerDisplay = document.getElementById("timer");
+            const restartBtn = document.getElementById("restart-btn");
 
-                let timeLeft = gameTime;
-                gameMessage.textContent = `Time left: ${timeLeft}s`;
-                gameInterval = setInterval(() => {
+            let currentLevel = 0;
+            let timeLeft;
+            let timerInterval;
+            const levelTime = 20; // seconds per level
+
+            // Function to load a level
+            function loadLevel(levelIndex) {
+                if (levelIndex >= levels.length) {
+                    levelQuestion.textContent = "";
+                    feedback.textContent = "Congratulations! You've completed The Hacker's Gauntlet: Ultimate Bug Hunter Edition.\nRemember: Every challenge is an opportunity to learn. Stay curious and keep enhancing your security skills.";
+                    timerDisplay.textContent = "";
+                    submitAnswer.disabled = true;
+                    answerInput.disabled = true;
+                    quitLevel.disabled = true;
+                    restartBtn.classList.remove("hidden");
+                    return;
+                }
+                const level = levels[levelIndex];
+                levelQuestion.textContent = level.question;
+                feedback.textContent = "";
+                answerInput.value = "";
+                answerInput.disabled = false;
+                submitAnswer.disabled = false;
+                quitLevel.disabled = false;
+                answerInput.focus();
+                startTimer();
+            }
+
+            // Start the timer for a level
+            function startTimer() {
+                clearInterval(timerInterval);
+                timeLeft = levelTime;
+                timerDisplay.textContent = `Time left: ${timeLeft}s`;
+                timerInterval = setInterval(() => {
                     timeLeft--;
-                    gameMessage.textContent = `Time left: ${timeLeft}s`;
+                    timerDisplay.textContent = `Time left: ${timeLeft}s`;
                     if (timeLeft <= 0) {
-                        clearInterval(gameInterval);
-                        clearInterval(bugInterval);
-                        gameMessage.textContent = `Game Over! Final Score: ${score}`;
-                        startButton.disabled = false;
+                        clearInterval(timerInterval);
+                        feedback.textContent = "Time's up! You failed this level.";
+                        answerInput.disabled = true;
+                        submitAnswer.disabled = true;
+                        quitLevel.disabled = true;
+                        restartBtn.classList.remove("hidden");
                     }
                 }, 1000);
-
-                // Spawn bugs every 800ms
-                bugInterval = setInterval(spawnBug, 800);
             }
 
-            function spawnBug() {
-                const bug = document.createElement("div");
-                bug.textContent = "🐛";
-                bug.className = "absolute text-3xl cursor-pointer animate__animated animate__fadeIn";
-                // Random position inside the container (account for bug size)
-                const containerRect = gameContainer.getBoundingClientRect();
-                const x = Math.random() * (containerRect.width - 40);
-                const y = Math.random() * (containerRect.height - 40);
-                bug.style.left = x + "px";
-                bug.style.top = y + "px";
-                gameContainer.appendChild(bug);
+            // Handle answer submission
+            submitAnswer.addEventListener("click", function () {
+                const userAnswer = answerInput.value.trim();
+                if (!userAnswer) return;
+                const correctAnswer = levels[currentLevel].answer;
+                if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+                    clearInterval(timerInterval);
+                    feedback.textContent = "Correct! Moving to the next level...";
+                    currentLevel++;
+                    setTimeout(() => { loadLevel(currentLevel); }, 1500);
+                } else {
+                    feedback.textContent = "Incorrect answer. Try again!";
+                }
+            });
 
-                // Remove bug after 1.5 seconds if not clicked
+            // Handle pressing Enter to submit
+            answerInput.addEventListener("keypress", function (e) {
+                if (e.key === "Enter") { submitAnswer.click(); }
+            });
+
+            // Handle quitting a level
+            quitLevel.addEventListener("click", function () {
+                clearInterval(timerInterval);
+                const level = levels[currentLevel];
+                feedback.textContent = `The correct answer is: "${level.answer}". ${level.explanation}`;
+                answerInput.disabled = true;
+                submitAnswer.disabled = true;
+                quitLevel.disabled = true;
+                // Automatically move to the next level after 5 seconds
                 setTimeout(() => {
-                    if (bug.parentElement) {
-                        bug.parentElement.removeChild(bug);
-                    }
-                }, 1500);
+                    currentLevel++;
+                    loadLevel(currentLevel);
+                }, 5000);
+            });
 
-                // On click, increase score and remove bug with a zoom-out effect
-                bug.addEventListener("click", () => {
-                    score++;
-                    scoreDisplay.textContent = score;
-                    bug.classList.add("animate__zoomOut");
-                    setTimeout(() => {
-                        if (bug.parentElement) {
-                            bug.parentElement.removeChild(bug);
-                        }
-                    }, 300);
-                });
-            }
+            // Restart challenge button
+            restartBtn.addEventListener("click", function () {
+                currentLevel = 0;
+                submitAnswer.disabled = false;
+                answerInput.disabled = false;
+                quitLevel.disabled = false;
+                restartBtn.classList.add("hidden");
+                loadLevel(currentLevel);
+            });
 
-            startButton.addEventListener("click", startGame);
+            // Start the challenge on page load
+            loadLevel(currentLevel);
         </script>
+
+
+
+
 
 
 
