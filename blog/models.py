@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
-from ckeditor_uploader.fields import RichTextUploadingField
+from tinymce.models import HTMLField
 # Create your models here.
 
 
@@ -32,7 +32,7 @@ class Post(models.Model):
     title = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
     description = models.TextField()
-    content = RichTextUploadingField()
+    content = HTMLField()
     thumbnail = models.ImageField(
         upload_to="thumbnails/Y/%m/%d/", null=True, blank=True
     )

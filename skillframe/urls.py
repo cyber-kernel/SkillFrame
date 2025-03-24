@@ -6,7 +6,7 @@ from . import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("ckeditor/", include("ckeditor_uploader.urls")),
+    path('tinymce/', include('tinymce.urls')),
     path("account/", include("account.urls")),
     path("todo/", include("todo.urls")),
     path("blog/", include("blog.urls")),
