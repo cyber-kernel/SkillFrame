@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib import messages
 from django.db.models import F, Count
 from .models import Post, Comment, CommentReply, Category
@@ -12,35 +12,19 @@ def all_blogs(request):
     return render(request, "blog/all_blogs.html", {"all_posts": all_posts})
 
 
-def handle_comments(request, post):
-    """Handles comment retrieval and submission for a blog post."""
-    # Fetch active comments and their replies
+def handle_comments(post):
+    """Fetch active comments and their replies for a blog post."""
     comments = post.comments.filter(is_active=True)
     comment_replies = CommentReply.objects.filter(is_active=True)
-
-    # Creating a dictionary of comments and their replies
     comments_with_replies = [
         {"comment": comment, "replies": comment_replies.filter(comment=comment)}
         for comment in comments
     ]
-
-    # Handle comment submission
-    if request.method == "POST" and "comment" in request.POST:
-        comment_text = request.POST.get("comment")
-        if request.user.is_authenticated and comment_text:
-            Comment.objects.create(
-                post=post, author=request.user, comment=comment_text, is_active=True
-            )
-            messages.success(request, "Your comment has been posted!")
-        else:
-            messages.error(request, "You must be logged in to post a comment.")
-
     return comments_with_replies
 
 
 def view_post(request, slug):
     """Handles blog post view and interactions."""
-    # Fetch the post based on the slug
     post = (
         Post.objects.filter(is_active=True, is_published=True, slug=slug)
         .annotate(updated_views=F("views") + 1)
@@ -55,13 +39,26 @@ def view_post(request, slug):
     post.views = post.updated_views
     post.save()
 
+    # If a comment is submitted, handle it and then redirect to refresh the page
+    if request.method == "POST" and "comment" in request.POST:
+        comment_text = request.POST.get("comment")
+        if request.user.is_authenticated and comment_text:
+            Comment.objects.create(
+                post=post, author=request.user, comment=comment_text, is_active=True
+            )
+            messages.success(request, "Your comment has been posted!")
+        else:
+            messages.error(request, "You must be logged in to post a comment.")
+        # Redirect so that the new comment is included in the fresh fetch
+        return redirect("blog:view_post", slug=post.slug)
+
     # Fetch related posts based on the category
     category_posts = Post.objects.filter(
         is_active=True, is_published=True, category=post.category
     ).exclude(slug=slug)[:3]
 
-    # Fetch comments using the new function
-    comments_with_replies = handle_comments(request, post)
+    # Now fetch comments and replies (this will include the newly posted comment after redirect)
+    comments_with_replies = handle_comments(post)
 
     # Prepare the context
     ctx = {
@@ -75,22 +72,16 @@ def view_post(request, slug):
 
 @login_required
 def post_reply(request, comment_id):
-    # Fetch the comment based on the comment_id
-    comment = Comment.objects.get(id=comment_id)
-
+    comment = get_object_or_404(Comment, id=comment_id)
     if request.method == "POST" and "reply" in request.POST:
         reply_text = request.POST.get("reply")
-
         if reply_text:
-            # Create a new reply for the comment
             CommentReply.objects.create(
                 comment=comment, author=request.user, reply=reply_text, is_active=True
             )
             messages.success(request, "Your reply has been posted!")
         else:
             messages.error(request, "You cannot post an empty reply.")
-
-    # After posting the reply, redirect back to the post page
     return redirect("blog:view_post", slug=comment.post.slug)
 
 
@@ -120,13 +111,13 @@ def latest_posts(request):
 
 def all_categories(request):
     categories = Category.objects.filter(is_active=True).annotate(
-        post_count=Count("posts")  # noqa: F821
+        post_count=Count("posts")
     )
     return render(request, "blog/all_categories.html", {"categories": categories})
 
 
 def category_posts(request, category_slug):
-    category = Category.objects.get(slug=category_slug)
+    category = get_object_or_404(Category, slug=category_slug)
     category_posts = Post.objects.filter(
         is_active=True, is_published=True, category=category
     ).order_by("-published_on")
